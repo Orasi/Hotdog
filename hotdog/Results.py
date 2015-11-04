@@ -3,6 +3,7 @@ from hotdog.Mustard import *
 
 
 class UploadResults(unittest.TestResult):
+    projectFolder = os.environ['PROJECTFOLDER']
 
     def addError(self, test, err):
         stack = self._exc_info_to_string(err, test)
