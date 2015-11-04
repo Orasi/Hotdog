@@ -1,17 +1,8 @@
-import time
-from appium.webdriver.common.mobileby import MobileBy as By
 from webium import BasePage, Find
 from hotdog import Mustard
-from hotdog.FindEither import FindEither
 
 
-class ClearleapBasePage(BasePage):
-
-
-    btnScreenMirroring = Find(by=By.ID, value='showcase_button')
-    loadingIndicator = Find(by=By.ID, value='progress')
-    castOverlay = FindEither(selectors=[[By.NAME, 'OK']])
-
+class HotDogBasePage(BasePage):
 
     def __new__(cls, *args, **kwargs):
         if 'driver' in kwargs:
@@ -31,23 +22,6 @@ class ClearleapBasePage(BasePage):
         if sync:
             self.waitForLoading()
             self.checkForCastOverlay()
-
-    def checkForCastOverlay(self):
-        present = self.is_element_present('castOverlay', timeout=1)
-        if present:
-            self.castOverlay.click()
-
-    def waitForLoading(self, timeout=15):
-        startTime = time.time()
-        loading = self.is_element_present('loadingIndicator', timeout=3)
-        while loading:
-            time.sleep(1)
-            loading = self.is_element_present('loadingIndicator')
-
-            if time.time() - startTime > timeout:
-                break
-                #raise Exception('Timeout waiting for Loading Indicator. Timeout=[%s]' % timeout)
-        return self
 
     def uploadScreenshot(self, test, name=None):
         Mustard.UploadScreenshot(self, test, name);
