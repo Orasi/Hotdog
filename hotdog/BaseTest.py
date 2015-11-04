@@ -1,0 +1,86 @@
+import os
+import unittest
+#import SauceClient as SauceClient
+from appium import webdriver
+from sauceclient import SauceClient
+from hotdog import Mustard
+from hotdog.Results import UploadResults
+from hotdog.Config import GetConfig
+from hotdog.FilePath import get_full_path
+from time import sleep, time
+from appium_selector.DeviceSelector import DeviceSelector
+import builtins
+import threading
+import webium.settings
+
+webium.settings.implicit_timeout = 5
+
+os.environ['APPIUMCONFIG'] = get_full_path('Config.xml')
+os.environ['APPIUMDEVICES'] = get_full_path('Devices.xml')
+
+class BaseTest(unittest.TestCase):
+
+
+    #Boilerplate Settings Do not Change
+    #Change in Config.xml
+    SAUCE_USERNAME = GetConfig('SAUCE_USERNAME')
+    SAUCE_ACCESS = GetConfig('SAUCE_ACCESS')
+
+    SAUCE_URL = "http://%s:%s@ondemand.saucelabs.com:80/wd/hub" % (SAUCE_USERNAME, SAUCE_ACCESS)
+    GRID_URL = GetConfig('GRID_URL') + '/wd/hub'
+    LOCAL_APPIUM_URL = GetConfig('LOCAL_APPIUM_URL')
+
+    failed = False
+    skipMustard = False
+    defaultTestResult = UploadResults
+
+    timersStart = {}
+    timersTotal = {}
+
+    @classmethod
+    def setUpClass(cls):
+        if not hasattr(builtins, 'threadlocal'):
+            builtins.threadlocal = threading.local()
+            builtins.threadlocal.config = DeviceSelector().getDevice()[0]
+
+    def setUp(self):
+        self.desired_caps = builtins.threadlocal.config['desiredCaps']
+        self.options = builtins.threadlocal.config['options']
+
+        self.provider = self.options['provider']
+
+        if self.provider.lower() == 'grid':
+            url = self.GRID_URL
+        elif self.provider.lower() == 'saucelabs':
+            url = self.SAUCE_URL
+        elif self.provider.lower() == 'local':
+            url = self.LOCAL_APPIUM_URL
+
+        try:
+            self.driver = webdriver.Remote(
+                url,
+                self.desired_caps
+            )
+        except:
+            raise unittest.SkipTest('Could not launch driver')
+
+        self.deviceName = self.desired_caps['deviceName']
+        print("Testcase [%s] started on device [%s]" % (self._testMethodName, self.desired_caps['browserName']))
+        sleep(3)
+
+    def tearDown(self):
+
+        if self.provider == 'saucelabs':
+            sauce_client = SauceClient(self.SAUCE_USERNAME, self.SAUCE_ACCESS)
+            sauce_client.jobs.update_job(self.driver.session_id, passed=self._outcomeForDoCleanups.success)
+
+    def run(self, result=None):
+        super().run( result=UploadResults())
+
+    def timerStart(self, name):
+        self.timersStart[name] = time()
+
+    def timerStop(self, name):
+        self.timersTotal[name] = time() - self.timersStart[name]
+        if self.options['mustard']:
+            Mustard.UploadPerformance(self.driver.desired_capabilities['udid'], name, self.timersTotal[name])
