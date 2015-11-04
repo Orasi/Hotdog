@@ -1,5 +1,4 @@
 import datetime
-from time import sleep, time
 import requests
 import os
 from hotdog.FilePath import get_full_path

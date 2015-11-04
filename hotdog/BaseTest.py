@@ -1,4 +1,3 @@
-import os
 import unittest
 #import SauceClient as SauceClient
 from appium import webdriver
@@ -6,7 +5,6 @@ from sauceclient import SauceClient
 from hotdog import Mustard
 from hotdog.Results import UploadResults
 from hotdog.Config import GetConfig
-from hotdog.FilePath import get_full_path
 from time import sleep, time
 from appium_selector.DeviceSelector import DeviceSelector
 import builtins
@@ -15,11 +13,7 @@ import webium.settings
 
 webium.settings.implicit_timeout = 5
 
-os.environ['APPIUMCONFIG'] = get_full_path('Config.xml')
-os.environ['APPIUMDEVICES'] = get_full_path('Devices.xml')
-
-class BaseTest(unittest.TestCase):
-
+class HotDogBaseTest(unittest.TestCase):
 
     #Boilerplate Settings Do not Change
     #Change in Config.xml
