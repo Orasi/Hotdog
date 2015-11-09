@@ -31,11 +31,12 @@ class HotDogBaseTest(unittest.TestCase):
     timersStart = {}
     timersTotal = {}
 
+
     @classmethod
     def setUpClass(cls):
         if not hasattr(builtins, 'threadlocal'):
             builtins.threadlocal = threading.local()
-            builtins.threadlocal.config = DeviceSelector().getDevice()[0]
+            builtins.threadlocal.config = DeviceSelector(platform='mobile').getDevice()[0]
 
     def setUp(self):
         self.desired_caps = builtins.threadlocal.config['desiredCaps']

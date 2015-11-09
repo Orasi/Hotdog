@@ -27,8 +27,11 @@ class UploadResults(unittest.TestResult):
         error_message = self.get_error_message(stack)
 
         UploadToMustard(test, 'fail', error_message=error_message, stacktrace=stack)
-        test.driver.close_app()
-        self.RemoveApp(test)
+        try:
+            test.driver.close_app()
+            self.RemoveApp(test)
+        except:
+            pass
 
         test.driver.quit()
         super().addFailure(test, err)
@@ -39,8 +42,11 @@ class UploadResults(unittest.TestResult):
 
     def addSuccess(self, test):
         UploadToMustard(test, 'pass')
-        test.driver.close_app()
-        self.RemoveApp(test)
+        try:
+            test.driver.close_app()
+            self.RemoveApp(test)
+        except:
+            pass
         test.driver.quit()
         super().addSuccess(test)
         print("Testcase [%s] ended with status [%s] on device [%s]" % (test._testMethodName,
