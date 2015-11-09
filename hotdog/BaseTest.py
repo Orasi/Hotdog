@@ -49,6 +49,8 @@ class HotDogBaseTest(unittest.TestCase):
             url = self.SAUCE_URL
         elif self.provider.lower() == 'local':
             url = self.LOCAL_APPIUM_URL
+        else:
+            url = self.GRID_URL
 
         try:
             self.driver = webdriver.Remote(
