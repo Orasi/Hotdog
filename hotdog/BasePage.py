@@ -16,12 +16,9 @@ class HotDogBasePage(BasePage):
         else:
             return super().__new__(cls)
 
-    def __init__(self, driver=None, url=None, sync=True):
+    def __init__(self, driver=None, url=None):
         self.driver = driver
         super().__init__(driver, url)
-        if sync:
-            self.waitForLoading()
-            self.checkForCastOverlay()
 
     def uploadScreenshot(self, test, name=None):
         Mustard.UploadScreenshot(self, test, name);
