@@ -1,5 +1,6 @@
 import unittest
 from appium import webdriver
+from selenium import webdriver as seleniumWebdriver
 from sauceclient import SauceClient
 from hotdog import Mustard
 from hotdog.Results import UploadResults
@@ -52,13 +53,13 @@ class HotDogBaseTest(unittest.TestCase):
                 url = self.LOCAL_APPIUM_URL
             elif self.provider.lower() == 'local chrome':
                 runLocal = True
-                self.driver = webdriver.Chrome()
+                self.driver = seleniumWebdriver.Chrome()
             elif self.provider.lower() == 'local firefox':
                 runLocal = True
-                self.driver = webdriver.Firefox()
+                self.driver = seleniumWebdriver.Firefox()
             elif self.provider.lower() == 'local ie':
                 runLocal = True
-                self.driver = webdriver.Ie()
+                self.driver = seleniumWebdriver.Ie()
             else:
                 url = self.GRID_URL
 
