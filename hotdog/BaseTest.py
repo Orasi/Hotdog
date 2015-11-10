@@ -1,5 +1,4 @@
 import unittest
-#import SauceClient as SauceClient
 from appium import webdriver
 from sauceclient import SauceClient
 from hotdog import Mustard
@@ -39,25 +38,35 @@ class HotDogBaseTest(unittest.TestCase):
             builtins.threadlocal.config = DeviceSelector(platform='mobile').getDevice()[0]
 
     def setUp(self):
+        runLocal = False
         self.desired_caps = builtins.threadlocal.config['desiredCaps']
         self.options = builtins.threadlocal.config['options']
 
         self.provider = self.options['provider']
-
-        if self.provider.lower() == 'grid':
-            url = self.GRID_URL
-        elif self.provider.lower() == 'saucelabs':
-            url = self.SAUCE_URL
-        elif self.provider.lower() == 'local':
-            url = self.LOCAL_APPIUM_URL
-        else:
-            url = self.GRID_URL
-
         try:
-            self.driver = webdriver.Remote(
-                url,
-                self.desired_caps
-            )
+            if self.provider.lower() == 'grid':
+                url = self.GRID_URL
+            elif self.provider.lower() == 'saucelabs':
+                url = self.SAUCE_URL
+            elif self.provider.lower() == 'local':
+                url = self.LOCAL_APPIUM_URL
+            elif self.provider.lower() == 'local chrome':
+                runLocal = True
+                self.driver = webdriver.Chrome()
+            elif self.provider.lower() == 'local firefox':
+                runLocal = True
+                self.driver = webdriver.Firefox()
+            elif self.provider.lower() == 'local ie':
+                runLocal = True
+                self.driver = webdriver.Ie()
+            else:
+                url = self.GRID_URL
+
+            if not runLocal:
+                self.driver = webdriver.Remote(
+                    url,
+                    self.desired_caps
+                )
         except:
             raise unittest.SkipTest('Could not launch driver')
 
