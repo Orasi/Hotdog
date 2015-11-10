@@ -7,8 +7,10 @@ class HotDogBasePage(BasePage):
     def __new__(cls, *args, **kwargs):
         if 'driver' in kwargs:
             driver = kwargs['driver']
-            platform = driver.desired_capabilities['desired']['platformName'].lower()
-
+            try:
+                platform = driver.desired_capabilities['desired']['platformName'].lower()
+            except:
+                return super().__new__(cls)
             if hasattr(cls,platform):
                 return getattr(cls, platform)(driver=driver)
             else:
