@@ -10,12 +10,10 @@ class UploadResults(unittest.TestResult):
         error_message = self.get_error_message(stack)
 
         UploadToMustard(test, 'fail', error_message=error_message, stacktrace=stack)
-        try:
-            test.driver.close_app()
-            self.RemoveApp(test)
-            test.driver.quit()
-        except:
-            pass
+        try: test.driver.close_app()
+        except: pass
+        try: self.RemoveApp(test)
+        except: pass
 
         super().addError( test, err)
         print("Testcase [%s] ended with status [%s] on device [%s]\n %s" % (test._testMethodName,
@@ -27,13 +25,11 @@ class UploadResults(unittest.TestResult):
         error_message = self.get_error_message(stack)
 
         UploadToMustard(test, 'fail', error_message=error_message, stacktrace=stack)
-        try:
-            test.driver.close_app()
-            self.RemoveApp(test)
-        except:
-            pass
+        try: test.driver.close_app()
+        except: pass
+        try: self.RemoveApp(test)
+        except: pass
 
-        test.driver.quit()
         super().addFailure(test, err)
         print("Testcase [%s] ended with status [%s] on device [%s] \n %s" % (test._testMethodName,
                                                                        'FAIL',
@@ -42,12 +38,10 @@ class UploadResults(unittest.TestResult):
 
     def addSuccess(self, test):
         UploadToMustard(test, 'pass')
-        try:
-            test.driver.close_app()
-            self.RemoveApp(test)
-        except:
-            pass
-        test.driver.quit()
+        try: test.driver.close_app()
+        except: pass
+        try: self.RemoveApp(test)
+        except: pass
         super().addSuccess(test)
         print("Testcase [%s] ended with status [%s] on device [%s]" % (test._testMethodName,
                                                                        'PASS',
@@ -65,4 +59,6 @@ class UploadResults(unittest.TestResult):
         try: test.driver.remove_app(GetConfig('IOS_BUNDLE_ID'))
         except: pass
         try: test.driver.remove_app(GetConfig('ANDROID_BUNDLE_ID'))
+        except: pass
+        try: test.driver.quit()
         except: pass
