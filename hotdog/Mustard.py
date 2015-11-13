@@ -9,13 +9,21 @@ MustardKey = GetConfig('MUSTARD_KEY')
 
 PROJECTFOLDER = GetConfig('ProjectFolder')
 
+def takeScreenshot(driver, imageName):
+    worked = True
+    try: driver.save_screenshot(imageName)
+    except:
+        try: driver.get_screenshot_as_file(imageName)
+        except: worked = False
+    return worked
+
 def UploadToMustard(test, status, error_message=None, stacktrace=None):
 
     if test.options['mustard'] and not test.skipMustard:
         try:
             imageName = PROJECTFOLDER + test.driver.desired_capabilities['udid']+'.png'
-            test.driver.save_screenshot(imageName)
-            files = {'screenshot': open(imageName, 'rb')}
+            if takeScreenshot(test.driver, imageName):
+                files = {'screenshot': open(imageName, 'rb')}
         except:
             files = None
 
@@ -43,16 +51,16 @@ def UploadToMustard(test, status, error_message=None, stacktrace=None):
 def UploadScreenshot(self, test, name=None):
     imageName = PROJECTFOLDER + test.driver.desired_capabilities['udid']+'.png'
     if test.options['mustard']:
-        test.driver.save_screenshot(imageName)
+        if takeScreenshot(test.driver, imageName):
+            files = {'screenshot': open(imageName, 'rb')}
 
-        files = {'screenshot': open(imageName, 'rb')}
-        payload = {'project_id': MustardKey,
+            payload = {'project_id': MustardKey,
                    'result_type': 'screenshot',
                    'device_id': test.driver.desired_capabilities['udid'],
                    'test_name': name if name else test.__class__.__name__,
                    }
 
-        Upload(payload, files)
+            Upload(payload, files)
 
         try:
             os.remove(imageName)
