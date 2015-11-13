@@ -21,7 +21,7 @@ def UploadToMustard(test, status, error_message=None, stacktrace=None):
 
     if test.options['mustard'] and not test.skipMustard:
         try:
-            imageName = PROJECTFOLDER + int(round(time.time() * 1000))+'.png'
+            imageName = PROJECTFOLDER + str(int(round(time.time() * 1000)))+'.png'
             if takeScreenshot(test.driver, imageName):
                 files = {'screenshot': open(imageName, 'rb')}
         except:
@@ -49,7 +49,7 @@ def UploadToMustard(test, status, error_message=None, stacktrace=None):
             pass
 
 def UploadScreenshot(self, test, name=None):
-    imageName = PROJECTFOLDER + int(round(time.time() * 1000))+'.png'
+    imageName = PROJECTFOLDER + str(int(round(time.time() * 1000)))+'.png'
     if test.options['mustard']:
         if takeScreenshot(test.driver, imageName):
             files = {'screenshot': open(imageName, 'rb')}
