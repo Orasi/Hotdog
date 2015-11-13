@@ -3,7 +3,7 @@ import requests
 import os
 from hotdog.FilePath import get_full_path
 from hotdog.Config import GetConfig
-
+import time
 MustardURL = GetConfig('MUSTARD_URL')
 MustardKey = GetConfig('MUSTARD_KEY')
 
@@ -21,7 +21,7 @@ def UploadToMustard(test, status, error_message=None, stacktrace=None):
 
     if test.options['mustard'] and not test.skipMustard:
         try:
-            imageName = PROJECTFOLDER + test.driver.desired_capabilities['udid']+'.png'
+            imageName = PROJECTFOLDER + int(round(time.time() * 1000))+'.png'
             if takeScreenshot(test.driver, imageName):
                 files = {'screenshot': open(imageName, 'rb')}
         except:
@@ -49,7 +49,7 @@ def UploadToMustard(test, status, error_message=None, stacktrace=None):
             pass
 
 def UploadScreenshot(self, test, name=None):
-    imageName = PROJECTFOLDER + test.driver.desired_capabilities['udid']+'.png'
+    imageName = PROJECTFOLDER + int(round(time.time() * 1000))+'.png'
     if test.options['mustard']:
         if takeScreenshot(test.driver, imageName):
             files = {'screenshot': open(imageName, 'rb')}
