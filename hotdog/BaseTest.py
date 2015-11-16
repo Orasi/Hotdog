@@ -45,19 +45,17 @@ class HotDogBaseTest(unittest.TestCase):
 
         self.provider = self.options['provider']
         try:
-            if self.provider.lower() == 'grid':
+            if 'grid' in self.provider:
                 url = self.GRID_URL
-            elif self.provider.lower() == 'saucelabs':
+            elif 'sauce' in self.provider:
                 url = self.SAUCE_URL
-            elif self.provider.lower() == 'local':
-                url = self.LOCAL_APPIUM_URL
-            elif self.provider.lower() == 'local chrome':
+            elif self.provider.lower() == 'local-chrome':
                 runLocal = True
                 self.driver = seleniumWebdriver.Chrome()
-            elif self.provider.lower() == 'local firefox':
+            elif self.provider.lower() == 'local-firefox':
                 runLocal = True
                 self.driver = seleniumWebdriver.Firefox()
-            elif self.provider.lower() == 'local ie':
+            elif self.provider.lower() == 'local-ie':
                 runLocal = True
                 self.driver = seleniumWebdriver.Ie()
             else:
