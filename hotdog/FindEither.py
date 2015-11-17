@@ -36,7 +36,7 @@ class FindEither(Find):
         found = False
         startTime = time()
         originalTimeout = webium.settings.implicit_timeout
-        webium.settings.implicit_timeout = -1
+        webium.settings.implicit_timeout = 0
         notTimeout = True
         while notTimeout:
             for selector in self.selectors:
