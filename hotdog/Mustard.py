@@ -27,14 +27,14 @@ def UploadToMustard(test, status, error_message=None, stacktrace=None):
         except:
             files = None
 
-
+        platform = test.desired_caps['platformName'] if 'platformName' in test.desiredCaps else test.desiredcaps['platform']
         payload = {'project_id': MustardKey,
                    'device_id': test.desired_caps['udid'],
                    'test_name': test._testMethodName,
                    'status': status,
                    'comment': error_message,
                    'stacktrace': stacktrace,
-                   'device_platform': test.desired_caps['platformName'],
+                   'device_platform': platform,
                    'device_type': test.options['manufacturer'] + ' ' +test.options['model'],
                    'os_version': test.options['osv']
                    }
