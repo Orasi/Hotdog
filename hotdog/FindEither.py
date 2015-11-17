@@ -78,7 +78,7 @@ class FindEither(Find):
 def FindsEither(ui_type=WebElement, selectors=None, context=None):
     startTime = time()
     originalTimeout = webium.settings.implicit_timeout
-    webium.settings.implicit_timeout = -1
+    webium.settings.implicit_timeout = 0
     notTimeout = True
     while notTimeout:
         for ident in selectors:
