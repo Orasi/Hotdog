@@ -2,6 +2,7 @@ import unittest
 from appium import webdriver
 from selenium import webdriver as seleniumWebdriver
 from sauceclient import SauceClient
+import sys
 from hotdog import Mustard
 from hotdog.Results import UploadResults
 from hotdog.Config import GetConfig
@@ -42,7 +43,7 @@ class HotDogBaseTest(unittest.TestCase):
         runLocal = False
         self.desired_caps = builtins.threadlocal.config['desiredCaps']
         self.options = builtins.threadlocal.config['options']
-
+        self.resultLink = None
         self.provider = self.options['provider']
         try:
             if 'grid' in self.provider:
@@ -74,10 +75,17 @@ class HotDogBaseTest(unittest.TestCase):
         sleep(3)
 
     def tearDown(self):
-
-        if self.provider == 'saucelabs':
-            sauce_client = SauceClient(self.SAUCE_USERNAME, self.SAUCE_ACCESS)
-            sauce_client.jobs.update_job(self.driver.session_id, passed=self._outcomeForDoCleanups.success)
+        if 'sauce' in self.provider.lower():
+            sauce = SauceClient(self.SAUCE_USERNAME, self.SAUCE_ACCESS)
+            self.resultLink = "https://saucelabs.com/jobs/%s" % self.driver.session_id
+            print('Result Link: %s' % self.resultLink)
+            try:
+                if sys.exc_info() == (None, None, None):
+                    sauce.jobs.update_job(self.driver.session_id, passed=True, name=self._testMethodName)
+                else:
+                    sauce.jobs.update_job(self.driver.session_id, passed=False, name=self._testMethodName)
+            except:
+                pass
 
     def run(self, result=None):
         super().run( result=UploadResults())
