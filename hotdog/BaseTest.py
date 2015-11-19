@@ -77,8 +77,7 @@ class HotDogBaseTest(unittest.TestCase):
     def tearDown(self):
         if 'sauce' in self.provider.lower():
             sauce = SauceClient(self.SAUCE_USERNAME, self.SAUCE_ACCESS)
-            self.resultLink = "https://saucelabs.com/jobs/%s" % self.driver.session_id
-            print('Result Link: %s' % self.resultLink)
+            self.resultLink = "https://saucelabs.com/beta/tests/%s" % self.driver.session_id
             try:
                 if sys.exc_info() == (None, None, None):
                     sauce.jobs.update_job(self.driver.session_id, passed=True, name=self._testMethodName)
