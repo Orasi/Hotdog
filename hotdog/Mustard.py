@@ -24,6 +24,8 @@ def UploadToMustard(test, status, error_message=None, stacktrace=None):
             imageName = PROJECTFOLDER + str(int(round(time.time() * 1000)))+'.png'
             if takeScreenshot(test.driver, imageName):
                 files = {'screenshot': open(imageName, 'rb')}
+            else:
+                files = None
         except:
             files = None
 
@@ -36,7 +38,8 @@ def UploadToMustard(test, status, error_message=None, stacktrace=None):
                    'stacktrace': stacktrace,
                    'device_platform': platform,
                    'device_type': test.options['manufacturer'] + ' ' +test.options['model'],
-                   'os_version': test.options['osv']
+                   'os_version': test.options['osv'],
+                   'link': test.resultLink
                    }
         if files:
             Upload(payload, files)
