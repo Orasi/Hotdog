@@ -69,6 +69,7 @@ class HotDogBaseTest(unittest.TestCase):
                 )
         except:
             raise unittest.SkipTest('Could not launch driver')
+            print("Testcase [%s] COULD NOT START on device [%s]" % (self._testMethodName, self.desired_caps['browserName']))
 
         self.deviceName = self.desired_caps['deviceName'] if 'deviceName' in self.desired_caps else self.desired_caps['udid']
         print("Testcase [%s] started on device [%s]" % (self._testMethodName, self.desired_caps['browserName']))
