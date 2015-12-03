@@ -7,7 +7,7 @@ class UploadResults(unittest.TestResult):
 
     def addError(self, test, err):
         stack = self._exc_info_to_string(err, test)
-        error_message = self.get_error_message(stack)
+        error_message = self.get_error_message(err, stack)
 
         UploadToMustard(test, 'fail', error_message=error_message, stacktrace=stack)
         self.RemoveApp(test)
@@ -19,7 +19,7 @@ class UploadResults(unittest.TestResult):
                                                                        stack))
     def addFailure(self, test, err):
         stack = self._exc_info_to_string(err, test)
-        error_message = self.get_error_message(stack)
+        error_message =  self.get_error_message(err, stack)
 
         UploadToMustard(test, 'fail', error_message=error_message, stacktrace=stack)
 
@@ -39,13 +39,16 @@ class UploadResults(unittest.TestResult):
                                                                        'PASS',
                                                                        test.desired_caps['browserName']))
 
-    def get_error_message(self, stacktrace):
-        stackArray = stacktrace.split('\n')
-        stackArray.reverse()
-        for stack in stackArray:
-            if len(stack) > 5:
-                splitMessage = stack.split(':')
-                return splitMessage[len(splitMessage)-1]
+    def get_error_message(self, error, stacktrace):
+        try:
+            return str(error[1])
+        except:
+            stackArray = stacktrace.split('\n')
+            stackArray.reverse()
+            for stack in stackArray:
+                if len(stack) > 5:
+                    splitMessage = stack.split(':')
+                    return splitMessage[len(splitMessage)-1]
 
     def RemoveApp(self, test):
         if 'mobile' in test.options['provider']:
