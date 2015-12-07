@@ -41,7 +41,11 @@ class UploadResults(unittest.TestResult):
 
     def get_error_message(self, error, stacktrace):
         try:
-            return str(error[1])
+            errmsg=  str(error[1])
+            if len(errmsg) > 100:
+                return errmsg[0:100]
+            else:
+                return errmsg
         except:
             stackArray = stacktrace.split('\n')
             stackArray.reverse()
