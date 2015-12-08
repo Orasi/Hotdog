@@ -92,7 +92,7 @@ def Upload(payload, files=None):
         caughtException = True
 
     if r.status_code != 200 or caughtException:
-        bl = get_full_path('MustardFailSafe.txt')
+        bl = PROJECTFOLDER + 'MustardFailSafe.txt'
 
         with open(bl, 'a') as backlog:
             backlog.write(str(datetime.datetime.now()) + '\n')
