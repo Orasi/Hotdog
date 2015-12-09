@@ -72,8 +72,8 @@ class HotDogBaseTest(unittest.TestCase):
             raise unittest.SkipTest('Could not launch driver')
 
 
-        self.deviceName = self.desired_caps['deviceName'] if 'deviceName' in self.desired_caps else self.desired_caps['udid']
-        print("Testcase [%s] started on device [%s]" % (self._testMethodName, self.desired_caps['browserName']))
+        self.deviceName = self.options['deviceName'] if 'deviceName' in self.options else self.desired_caps['udid']
+        print("Testcase [%s] started on device [%s]" % (self._testMethodName, self.options['deviceName']))
         sleep(3)
 
     def tearDown(self):
@@ -97,4 +97,4 @@ class HotDogBaseTest(unittest.TestCase):
     def timerStop(self, name):
         self.timersTotal[name] = time() - self.timersStart[name]
         if self.options['mustard']:
-            Mustard.UploadPerformance(self.driver.desired_capabilities['udid'], name, self.timersTotal[name])
+            Mustard.UploadPerformance(Mustard.getDeviceID(self), name, self.timersTotal[name])

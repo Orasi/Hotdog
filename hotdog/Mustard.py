@@ -31,7 +31,7 @@ def UploadToMustard(test, status, error_message=None, stacktrace=None):
 
         platform = test.desired_caps['platformName'] if 'platformName' in test.desired_caps else test.desired_caps['platform']
         payload = {'project_id': MustardKey,
-                   'device_id': test.desired_caps['udid'],
+                   'device_id': getDeviceID(test),
                    'test_name': test._testMethodName,
                    'status': status,
                    'comment': error_message,
@@ -59,7 +59,7 @@ def UploadScreenshot(self, test, name=None):
 
             payload = {'project_id': MustardKey,
                    'result_type': 'screenshot',
-                   'device_id': test.driver.desired_capabilities['udid'],
+                   'device_id': getDeviceID(test),
                    'test_name': name if name else test.__class__.__name__,
                    }
 
@@ -92,7 +92,7 @@ def Upload(payload, files=None):
         caughtException = True
 
     if r.status_code != 200 or caughtException:
-        bl = PROJECTFOLDER + 'MustardFailSafe.txt'
+        bl = PROJECTFOLDER + '/MustardFailSafe.txt'
 
         with open(bl, 'a') as backlog:
             backlog.write(str(datetime.datetime.now()) + '\n')
@@ -100,3 +100,9 @@ def Upload(payload, files=None):
             backlog.write('\n')
             backlog.write('\n')
         print('Failed to upload results to mustard.  Saved to MustardFailSafe.txt')
+
+def getDeviceID(test):
+    if 'udid' in test.driver.desired_capabilities:
+        return test.driver.desired_capabilities['udid']
+    else:
+        return test.options['deviceName']
