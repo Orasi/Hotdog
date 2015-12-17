@@ -2,12 +2,12 @@ from distutils.core import setup
 setup(
   name = 'hotdog',
   packages = ['hotdog'],
-  version = '1.0.16',
+  version = '1.0.17',
   description = 'Appium/Selenium testing framework deriving from unittest',
   author = 'Matt Watson',
   author_email = 'Watson.Mattc@gmail.com',
   url = 'https://github.com/Mattwhooo/Hotdog',
-  download_url = 'https://github.com/Mattwhooo/Hotdog/tarball/1.0.16',
+  download_url = 'https://github.com/Mattwhooo/Hotdog/tarball/1.0.17',
   keywords = ['appium', 'selenium', 'testing'],
   classifiers=[],
   install_requires=['webium', 'testtools','beautifulsoup4','Appium-Python-Client', 'requests', 'sauceclient', 'timeout-decorator', 'appium_selector']

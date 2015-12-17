@@ -61,7 +61,7 @@ class HotDogBasePage(BasePage):
                 end_y = center_y_loc
 
         elif direction.lower() == 'right':
-                start_x = screen['width'] * 0.1
+                start_x = screen['width'] * 0.01
                 end_x = screen['width'] * 0.9
                 start_y = center_y_loc
                 end_y = center_y_loc
