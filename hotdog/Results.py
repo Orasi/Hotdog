@@ -15,7 +15,7 @@ class UploadResults(unittest.TestResult):
         super().addError( test, err)
         print("Testcase [%s] ended with status [%s] on device [%s]\n %s" % (test._testMethodName,
                                                                        'ERROR',
-                                                                       test.desired_caps['deviceName'],
+                                                                       test.options['deviceName'],
                                                                        stack))
     def addFailure(self, test, err):
         stack = self._exc_info_to_string(err, test)
@@ -28,7 +28,7 @@ class UploadResults(unittest.TestResult):
         super().addFailure(test, err)
         print("Testcase [%s] ended with status [%s] on device [%s] \n %s" % (test._testMethodName,
                                                                        'FAIL',
-                                                                       test.desired_caps['deviceName'],
+                                                                       test.options['deviceName'],
                                                                        stack))
 
     def addSuccess(self, test):
@@ -37,7 +37,7 @@ class UploadResults(unittest.TestResult):
         super().addSuccess(test)
         print("Testcase [%s] ended with status [%s] on device [%s]" % (test._testMethodName,
                                                                        'PASS',
-                                                                       test.desired_caps['deviceName']))
+                                                                       test.options['deviceName']))
 
     def get_error_message(self, error, stacktrace):
         try:
