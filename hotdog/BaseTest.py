@@ -34,10 +34,10 @@ class HotDogBaseTest(unittest.TestCase):
 
 
     @classmethod
-    def setUpClass(cls):
+    def setUpClass(cls, platform='mobile'):
         if not hasattr(builtins, 'threadlocal'):
             builtins.threadlocal = threading.local()
-            builtins.threadlocal.config = DeviceSelector(platform='mobile').getDevice()[0]
+            builtins.threadlocal.config = DeviceSelector(platform=platform).getDevice()[0]
             provider = builtins.threadlocal.config['options']['provider']
             desired_caps = builtins.threadlocal.config['desiredCaps']
             try:
@@ -112,9 +112,17 @@ class HotDogBaseTest(unittest.TestCase):
             sleep(3)
         else:
             self.driver = builtins.threadlocal.driver
-            self.deviceName = self.options['deviceName'] if 'deviceName' in self.options else self.desired_caps['udid']
-            print("Testcase [%s] started on device [%s]" % (self._testMethodName, self.options['deviceName']))
+            self.deviceName = self.environmentName()
+            print("Testcase [%s] started on device [%s]" % (self._testMethodName, self.deviceName))
             self.continueWithDriver = True
+
+    def environmentName(self):
+        if 'deviceName' in self.options:
+            return self.options['deviceName']
+        elif 'udid' in self.desired_caps:
+            return self.desired_caps['udid']
+        else:
+            return 'local device'
 
     def tearDown(self):
         if 'sauce' in self.provider.lower():
