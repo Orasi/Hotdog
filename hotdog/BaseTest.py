@@ -107,7 +107,7 @@ class HotDogBaseTest(unittest.TestCase):
                 raise unittest.SkipTest('Could not launch driver')
 
             builtins.threadlocal.driver = self.driver
-            self.deviceName = self.options['deviceName'] if 'deviceName' in self.options else self.desired_caps['udid']
+            self.options['deviceName'] = self.environmentName()
             print("Testcase [%s] started on device [%s]" % (self._testMethodName, self.options['deviceName']))
             sleep(1)
         else:
