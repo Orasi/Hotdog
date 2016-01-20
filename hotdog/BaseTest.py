@@ -112,8 +112,8 @@ class HotDogBaseTest(unittest.TestCase):
             sleep(3)
         else:
             self.driver = builtins.threadlocal.driver
-            self.deviceName = self.environmentName()
-            print("Testcase [%s] started on device [%s]" % (self._testMethodName, self.deviceName))
+            self.options['deviceName'] = self.environmentName()
+            print("Testcase [%s] started on device [%s]" % (self._testMethodName, self.options['deviceName']))
             self.continueWithDriver = True
 
     def environmentName(self):
@@ -122,7 +122,7 @@ class HotDogBaseTest(unittest.TestCase):
         elif 'udid' in self.desired_caps:
             return self.desired_caps['udid']
         else:
-            return 'local device'
+            return self.options['provider']
 
     def tearDown(self):
         if 'sauce' in self.provider.lower():
