@@ -1,4 +1,6 @@
 import unittest
+import builtins
+
 from hotdog.Mustard import *
 
 
@@ -11,7 +13,7 @@ class UploadResults(unittest.TestResult):
 
         UploadToMustard(test, 'fail', error_message=error_message, stacktrace=stack)
         self.RemoveApp(test)
-
+        builtins.threadlocal.driver = None
         super().addError( test, err)
         print("Testcase [%s] ended with status [%s] on device [%s]\n %s" % (test._testMethodName,
                                                                        'ERROR',
@@ -24,7 +26,7 @@ class UploadResults(unittest.TestResult):
         UploadToMustard(test, 'fail', error_message=error_message, stacktrace=stack)
 
         self.RemoveApp(test)
-
+        builtins.threadlocal.driver = None
         super().addFailure(test, err)
         print("Testcase [%s] ended with status [%s] on device [%s] \n %s" % (test._testMethodName,
                                                                        'FAIL',

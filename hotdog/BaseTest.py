@@ -136,6 +136,22 @@ class HotDogBaseTest(unittest.TestCase):
             except:
                 pass
 
+    @classmethod
+    def tearDownClass(cls):
+        cls.RemoveApp()
+
+    @classmethod
+    def RemoveApp(self):
+        if 'mobile' in builtins.threadlocal.config['options']['provider']:
+            try: builtins.threadlocal.driver.close_app()
+            except: pass
+            try: builtins.threadlocal.driver.remove_app(GetConfig('IOS_BUNDLE_ID'))
+            except: pass
+            try: builtins.threadlocal.driver.remove_app(GetConfig('ANDROID_BUNDLE_ID'))
+            except: pass
+        try: builtins.threadlocal.driver.quit()
+        except: pass
+
     def run(self, result=None):
         super().run( result=UploadResults())
 
