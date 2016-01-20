@@ -38,6 +38,37 @@ class HotDogBaseTest(unittest.TestCase):
         if not hasattr(builtins, 'threadlocal'):
             builtins.threadlocal = threading.local()
             builtins.threadlocal.config = DeviceSelector(platform='mobile').getDevice()[0]
+            provider = builtins.threadlocal.config['options']['provider']
+            desired_caps = builtins.threadlocal.config['desiredCaps']
+            try:
+                if 'grid' in provider:
+                    url = GetConfig('GRID_URL') + '/wd/hub'
+                elif 'sauce' in provider:
+                    url = "http://%s:%s@ondemand.saucelabs.com:80/wd/hub" % (GetConfig('SAUCE_USERNAME'), GetConfig('SAUCE_ACCESS'))
+                elif provider.lower() == 'local-chrome':
+                    runLocal = True
+                    builtins.threadlocal.driver = seleniumWebdriver.Chrome()
+                elif provider.lower() == 'local-firefox':
+                    runLocal = True
+                    builtins.threadlocal.driver = seleniumWebdriver.Firefox()
+                elif provider.lower() == 'local-ie':
+                    runLocal = True
+                    driver = seleniumWebdriver.Ie()
+                else:
+                    url = GetConfig('GRID_URL') + '/wd/hub'
+
+                if not runLocal:
+                    builtins.threadlocal.driver = webdriver.Remote(
+                        url,
+                        desired_caps
+                    )
+            except:
+                #print("Testcase [%s] COULD NOT START on device [%s]" % (self._testMethodName, self.options['deviceName']))
+                print(sys.exc_info()[1])
+                raise unittest.SkipTest('Could not launch driver')
+
+
+
 
     def setUp(self):
         runLocal = False
@@ -45,37 +76,45 @@ class HotDogBaseTest(unittest.TestCase):
         self.options = builtins.threadlocal.config['options']
         self.resultLink = None
         self.provider = self.options['provider']
-        try:
-            if 'grid' in self.provider:
-                url = self.GRID_URL
-            elif 'sauce' in self.provider:
-                url = self.SAUCE_URL
-            elif self.provider.lower() == 'local-chrome':
-                runLocal = True
-                self.driver = seleniumWebdriver.Chrome()
-            elif self.provider.lower() == 'local-firefox':
-                runLocal = True
-                self.driver = seleniumWebdriver.Firefox()
-            elif self.provider.lower() == 'local-ie':
-                runLocal = True
-                self.driver = seleniumWebdriver.Ie()
-            else:
-                url = self.GRID_URL
+        if not builtins.threadlocal.driver:
 
-            if not runLocal:
-                self.driver = webdriver.Remote(
-                    url,
-                    self.desired_caps
-                )
-        except:
-            print("Testcase [%s] COULD NOT START on device [%s]" % (self._testMethodName, self.options['deviceName']))
-            print(sys.exc_info()[1])
-            raise unittest.SkipTest('Could not launch driver')
+            try:
+                if 'grid' in self.provider:
+                    url = self.GRID_URL
+                elif 'sauce' in self.provider:
+                    url = self.SAUCE_URL
+                elif self.provider.lower() == 'local-chrome':
+                    runLocal = True
+                    self.driver = seleniumWebdriver.Chrome()
+                elif self.provider.lower() == 'local-firefox':
+                    runLocal = True
+                    self.driver = seleniumWebdriver.Firefox()
+                elif self.provider.lower() == 'local-ie':
+                    runLocal = True
+                    self.driver = seleniumWebdriver.Ie()
+                else:
+                    url = self.GRID_URL
+
+                if not runLocal:
+                    self.driver = webdriver.Remote(
+                        url,
+                        self.desired_caps
+                    )
+                self.continueWithDriver = False
+            except:
+                print("Testcase [%s] COULD NOT START on device [%s]" % (self._testMethodName, self.options['deviceName']))
+                print(sys.exc_info()[1])
+                raise unittest.SkipTest('Could not launch driver')
 
 
-        self.deviceName = self.options['deviceName'] if 'deviceName' in self.options else self.desired_caps['udid']
-        print("Testcase [%s] started on device [%s]" % (self._testMethodName, self.options['deviceName']))
-        sleep(3)
+            self.deviceName = self.options['deviceName'] if 'deviceName' in self.options else self.desired_caps['udid']
+            print("Testcase [%s] started on device [%s]" % (self._testMethodName, self.options['deviceName']))
+            sleep(3)
+        else:
+            self.driver = builtins.threadlocal.driver
+            self.deviceName = self.options['deviceName'] if 'deviceName' in self.options else self.desired_caps['udid']
+            print("Testcase [%s] started on device [%s]" % (self._testMethodName, self.options['deviceName']))
+            self.continueWithDriver = True
 
     def tearDown(self):
         if 'sauce' in self.provider.lower():

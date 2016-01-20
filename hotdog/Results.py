@@ -33,7 +33,7 @@ class UploadResults(unittest.TestResult):
 
     def addSuccess(self, test):
         UploadToMustard(test, 'pass')
-        self.RemoveApp(test)
+        #self.RemoveApp(test)
         super().addSuccess(test)
         print("Testcase [%s] ended with status [%s] on device [%s]" % (test._testMethodName,
                                                                        'PASS',
