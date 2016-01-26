@@ -38,6 +38,7 @@ class UploadResults(unittest.TestResult):
         try:
             builtins.threadlocal.keepSession
         except:
+            builtins.threadlocal.driver = None
             self.RemoveApp(test)
         super().addSuccess(test)
         print("Testcase [%s] ended with status [%s] on device [%s]" % (test._testMethodName,
