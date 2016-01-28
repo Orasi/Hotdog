@@ -36,6 +36,7 @@ class HotDogBaseTest(unittest.TestCase):
     @classmethod
     def setUpClass(cls, platform='mobile'):
         if not hasattr(builtins, 'threadlocal'):
+            runLocal = False
             builtins.threadlocal = threading.local()
             builtins.threadlocal.config = DeviceSelector(platform=platform).getDevice()[0]
             provider = builtins.threadlocal.config['options']['provider']
