@@ -1,6 +1,9 @@
 import datetime
 import requests
 import os
+
+import sys
+
 from hotdog.FilePath import get_full_path
 from hotdog.Config import GetConfig
 import time
@@ -87,16 +90,19 @@ def UploadPerformance(device, name, time):
 def Upload(payload, files=None):
     caughtException = False
     try:
-        r = requests.post(MustardURL, data=payload, files=files)
+        r = requests.post(MustardURL, data=payload, files=files, verify=False)
     except:
+        exceptionMessage = str(sys.exc_info()[1])
         caughtException = True
 
-    if r.status_code != 200 or caughtException:
+    if  caughtException or r.status_code != 200:
         bl = PROJECTFOLDER + '/MustardFailSafe.txt'
 
         with open(bl, 'a') as backlog:
             backlog.write(str(datetime.datetime.now()) + '\n')
             backlog.write(str(payload))
+            if 'exceptionMessage' in locals():
+                backlog.write(exceptionMessage)
             backlog.write('\n')
             backlog.write('\n')
         print('Failed to upload results to mustard.  Saved to MustardFailSafe.txt')
