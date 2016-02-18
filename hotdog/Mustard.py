@@ -90,7 +90,7 @@ def UploadPerformance(device, name, time):
 def Upload(payload, files=None):
     caughtException = False
     try:
-        r = requests.post(MustardURL, data=payload, files=files, verify=False)
+        r = requests.post(MustardURL, data=payload, files=files)
     except:
         exceptionMessage = str(sys.exc_info()[1])
         caughtException = True
