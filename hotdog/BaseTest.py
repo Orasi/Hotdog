@@ -24,6 +24,8 @@ class HotDogBaseTest(unittest.TestCase):
     SAUCE_URL = "http://%s:%s@ondemand.saucelabs.com:80/wd/hub" % (SAUCE_USERNAME, SAUCE_ACCESS)
     GRID_URL = GetConfig('GRID_URL') + '/wd/hub'
     LOCAL_APPIUM_URL = GetConfig('LOCAL_APPIUM_URL')
+    # use SKIP_SELECTOR to bypass the device selector & run local with platfrom from LOCAL_BROWSER
+    SKIP_SELECTOR = GetConfig('SKIP_SELECTOR')
 
     failed = False
     skipMustard = False
@@ -38,7 +40,25 @@ class HotDogBaseTest(unittest.TestCase):
         if not hasattr(builtins, 'threadlocal'):
             runLocal = False
             builtins.threadlocal = threading.local()
-            builtins.threadlocal.config = DeviceSelector(platform=platform).getDevice()[0]
+
+            if HotDogBaseTest.SKIP_SELECTOR == 'True':
+                # skip device selector, fill in defaults for running locally
+                builtins.threadlocal.config = {
+                    'desiredCaps': {'browserName':  'Local',
+                                    'deviceName':   'Local',
+                                    'platformName': 'Local',
+                                    'version':      'Local'},
+                    'options': {'manufacturer': 'local',
+                                'mustard':       False,
+                                'provider':     'local-'+GetConfig('LOCAL_BROWSER'),
+                                'osv':          'Local',
+                                'model':        'local',
+                                }
+                }
+            else:
+                # use selector to get device/platform
+                builtins.threadlocal.config = DeviceSelector(platform=platform).getDevice()[0]
+
             provider = builtins.threadlocal.config['options']['provider']
             desired_caps = builtins.threadlocal.config['desiredCaps']
             try:
