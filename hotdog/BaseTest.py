@@ -24,8 +24,14 @@ class HotDogBaseTest(unittest.TestCase):
     SAUCE_URL = "http://%s:%s@ondemand.saucelabs.com:80/wd/hub" % (SAUCE_USERNAME, SAUCE_ACCESS)
     GRID_URL = GetConfig('GRID_URL') + '/wd/hub'
     LOCAL_APPIUM_URL = GetConfig('LOCAL_APPIUM_URL')
-    # use SKIP_SELECTOR to bypass the device selector & run local with platfrom from LOCAL_BROWSER
-    SKIP_SELECTOR = GetConfig('SKIP_SELECTOR')
+    # set SKIP_SELECTOR to bypass the device selector & run local with platfrom from LOCAL_BROWSER
+    try:
+        SKIP_SELECTOR = GetConfig('SKIP_SELECTOR')
+        LOCAL_BROWSER = GetConfig('LOCAL_BROWSER')
+    except:
+        #xml file is missing SKIP_SELECTOR/LOCAL_BROWSER
+        SKIP_SELECTOR = 'False'
+        # LOCAL_BROWSER = 'firefox'   # will not be used
 
     failed = False
     skipMustard = False
@@ -50,7 +56,7 @@ class HotDogBaseTest(unittest.TestCase):
                                     'version':      'Local'},
                     'options': {'manufacturer': 'local',
                                 'mustard':       False,
-                                'provider':     'local-'+GetConfig('LOCAL_BROWSER'),
+                                'provider':     'local-'+HotDogBaseTest.LOCAL_BROWSER,
                                 'osv':          'Local',
                                 'model':        'local',
                                 }
