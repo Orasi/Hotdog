@@ -45,6 +45,11 @@ class BaseElement(WebElement):
         time.sleep(0.5)
         self.javascript("this.style.border='0px'")
 
+    def set(self, text):
+        if self.debug:
+            self.flash()
+        super().send_keys(text)
+
     def click(self):
         if self.debug:
             self.flash()
