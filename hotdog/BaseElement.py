@@ -1,3 +1,4 @@
+import time
 from selenium.webdriver.remote.webdriver import WebElement
 
 from hotdog.Retry import Retry
@@ -28,6 +29,17 @@ class BaseElement(WebElement):
 
     def highlight(self):
         self.javascript("this.style.border='3px solid yellow'")
+        time.sleep(0.5)
+        self.javascript("this.style.border='0pxw'")
+        time.sleep(0.5)
+        self.javascript("this.style.border='3px solid yellow'")
+        time.sleep(0.5)
+        self.javascript("this.style.border='0pxw'")
+        time.sleep(0.5)
+        self.javascript("this.style.border='3px solid yellow'")
+        time.sleep(0.5)
+        self.javascript("this.style.border='0pxw'")
+
 
     def jsClick(self):
         self.javascript('this.click()')
