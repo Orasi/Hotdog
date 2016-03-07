@@ -6,6 +6,8 @@ from hotdog.Retry import Retry
 
 class BaseElement(WebElement):
 
+    debug = False
+
     @property
     def driver(self):
         return self._parent
@@ -29,6 +31,9 @@ class BaseElement(WebElement):
 
     def highlight(self):
         self.javascript("this.style.border='3px solid yellow'")
+
+    def flash(self):
+        self.javascript("this.style.border='3px solid yellow'")
         time.sleep(0.5)
         self.javascript("this.style.border='0px'")
         time.sleep(0.5)
@@ -40,6 +45,11 @@ class BaseElement(WebElement):
         time.sleep(0.5)
         self.javascript("this.style.border='0px'")
 
+    def click(self):
+        if self.debug:
+            self.flash
+
+        super().click()
 
     def jsClick(self):
         self.javascript('this.click()')

@@ -11,4 +11,7 @@ class BaseWebDriver(WebDriver):
             element.__class__ = type
         else:
             element.__class__ = BaseElement
+
+        if hasattr(self, 'debug'):
+            element.debug = self.debug
         return element
