@@ -47,7 +47,7 @@ class BaseElement(WebElement):
 
     def click(self):
         if self.debug:
-            self.flash
+            self.flash()
 
         super().click()
 
