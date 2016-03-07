@@ -30,15 +30,15 @@ class BaseElement(WebElement):
     def highlight(self):
         self.javascript("this.style.border='3px solid yellow'")
         time.sleep(0.5)
-        self.javascript("this.style.border='0pxw'")
+        self.javascript("this.style.border='0px'")
         time.sleep(0.5)
         self.javascript("this.style.border='3px solid yellow'")
         time.sleep(0.5)
-        self.javascript("this.style.border='0pxw'")
+        self.javascript("this.style.border='0px'")
         time.sleep(0.5)
         self.javascript("this.style.border='3px solid yellow'")
         time.sleep(0.5)
-        self.javascript("this.style.border='0pxw'")
+        self.javascript("this.style.border='0px'")
 
 
     def jsClick(self):
