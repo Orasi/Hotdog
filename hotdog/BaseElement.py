@@ -13,6 +13,8 @@ class BaseElement(WebElement):
         return self._parent
 
     def find(self, objectName, type=None):
+        if len(objectName) == 3 and not type:
+            type = objectName[2]
         locators = getattr(self, objectName)
         element = self.driver.find_element(locators[0], locators[1])
         if type:

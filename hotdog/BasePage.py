@@ -18,6 +18,13 @@ class HotDogBasePage(BasePage):
         else:
             return super().__new__(cls)
 
+    def find(self, objectName, type=None):
+        if len(objectName) == 3 and not type:
+            type = objectName[2]
+        locators = getattr(self, objectName)
+        element = self.driver.find_element(locators[0], locators[1], type=type)
+        return element
+
     def __init__(self, driver=None, url=None):
         self.driver = driver
         super().__init__(driver, url)
