@@ -19,9 +19,9 @@ class HotDogBasePage(BasePage):
             return super().__new__(cls)
 
     def find(self, objectName, type=None):
-        if len(objectName) == 3 and not type:
-            type = objectName[2]
         locators = getattr(self, objectName)
+        if len(locators) == 3 and not type:
+            type = locators[2]
         element = self.driver.find_element(locators[0], locators[1], type=type)
         return element
 
@@ -46,6 +46,9 @@ class HotDogBasePage(BasePage):
         y_loc = location['y'] + (size['height']/2)
         loc = (x_loc, y_loc)
         self.driver.tap([loc])
+
+    def back(self):
+        self.driver.execute_script("window.history.go(-1)");
 
 
     def swipe(self, direction, element=None, duration=None):
