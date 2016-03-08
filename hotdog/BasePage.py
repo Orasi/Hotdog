@@ -1,8 +1,6 @@
-from webium import BasePage, Find
 from hotdog import Mustard
 
-
-class HotDogBasePage(BasePage):
+class HotDogBasePage(object):
 
     def __new__(cls, *args, **kwargs):
         if 'driver' in kwargs:
@@ -104,3 +102,11 @@ class HotDogBasePage(BasePage):
             raise ValueError('Invalid Direction for swipe. [%s]' % direction)
 
         self.driver.swipe(start_x, start_y, end_x, end_y, duration=duration)
+
+    def open(self):
+        if not self.url:
+            raise Exception('Can\'t open page without url')
+        self._driver.get(self.url)
+
+    def implicitly_wait(self, *args):
+        return self._driver.implicitly_wait(*args)
