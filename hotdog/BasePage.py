@@ -32,6 +32,12 @@ class HotDogBasePage(BasePage):
         element = self.driver.finds_element(locators[0], locators[1], type=type)
         return element
 
+    def find_element(self, *args, **kwargs):
+        return self.driver.find_element(*args, **kwargs)
+
+    def find_elements(self, *args, **kwargs):
+        return self.driver.find_elements(*args, **kwargs)
+
     def __init__(self, driver=None, url=None):
         self.driver = driver
         super().__init__(driver, url)
