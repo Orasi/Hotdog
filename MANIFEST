@@ -12,3 +12,5 @@ hotdog/Mustard.py
 hotdog/Results.py
 hotdog/Retry.py
 hotdog/__init__.py
+hotdog/Elements/Checkbox.py
+hotdog/Elements/__init__.py
