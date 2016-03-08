@@ -15,3 +15,17 @@ class BaseWebDriver(WebDriver):
         if hasattr(self, 'debug'):
             element.debug = self.debug
         return element
+
+    def find_elements(self, by=By.ID, value=None, type=None):
+        elements =  super().find_element(by, value)
+        if type:
+             klass = type
+        else:
+            klass = BaseElement
+
+        for element in elements:
+            element.__class__ = klass
+
+        if hasattr(self, 'debug'):
+            element.debug = self.debug
+        return element
