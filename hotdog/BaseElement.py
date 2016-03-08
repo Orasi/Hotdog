@@ -29,8 +29,8 @@ class BaseElement(WebElement):
         locators = getattr(self, objectName)
         if len(locators) == 3 and not type:
             type = locators[2]
-        element = self.driver.find_elements(locators[0], locators[1], type=type)
-        return element
+        elements = self.find_elements(locators[0], locators[1], type=type)
+        return elements
 
     def find_element(self, by=By.ID, value=None):
         element =  super().find_element(by, value)
