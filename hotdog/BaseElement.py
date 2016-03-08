@@ -1,4 +1,6 @@
 import time
+
+from selenium.webdriver.common.by import By
 from selenium.webdriver.remote.webdriver import WebElement
 
 from hotdog.Retry import Retry
@@ -16,12 +18,46 @@ class BaseElement(WebElement):
         locators = getattr(self, objectName)
         if len(locators) == 3 and not type:
             type = locators[2]
-        element = self.driver.find_element(locators[0], locators[1])
+        element = self.find_element(locators[0], locators[1])
         if type:
             element.__class__ = type
         else:
             element.__class__ = BaseElement
         return element
+
+    def finds(self, objectName, type=None):
+        locators = getattr(self, objectName)
+        if len(locators) == 3 and not type:
+            type = locators[2]
+        element = self.driver.finds_element(locators[0], locators[1], type=type)
+        return element
+
+    def find_element(self, by=By.ID, value=None):
+        element =  super().find_element(by, value)
+        if type:
+             klass = type
+        else:
+            klass = BaseElement
+
+        element.__class__ = klass
+
+        if hasattr(self, 'debug'):
+            element.debug = self.debug
+        return element
+
+    def find_elements(self, by=By.ID, value=None, type=None):
+        elements =  super().find_element(by, value)
+        if type:
+             klass = type
+        else:
+            klass = BaseElement
+
+        for element in elements:
+            element.__class__ = klass
+
+            if hasattr(self, 'debug'):
+                element.debug = self.debug
+        return elements
 
     def javascript_async(self, script):
         script = script.replace("this", 'arguments[0]')
