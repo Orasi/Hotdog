@@ -28,4 +28,4 @@ class BaseWebDriver(WebDriver):
 
         if hasattr(self, 'debug'):
             element.debug = self.debug
-        return element
+        return elements
