@@ -17,7 +17,7 @@ class BaseWebDriver(WebDriver):
         return element
 
     def find_elements(self, by=By.ID, value=None, type=None):
-        elements =  super().find_element(by, value)
+        elements =  super().find_elements(by, value)
         if type:
              klass = type
         else:
