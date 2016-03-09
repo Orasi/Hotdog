@@ -32,7 +32,7 @@ class BaseElement(WebElement):
         elements = self.find_elements(locators[0], locators[1], type=type)
         return elements
 
-    def find_element(self, by=By.ID, value=None):
+    def find_element(self, by=By.ID, value=None, type=None):
         element =  super().find_element(by, value)
         if type:
              klass = type
