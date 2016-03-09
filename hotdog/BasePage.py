@@ -27,7 +27,7 @@ class HotDogBasePage(object):
         locators = getattr(self, objectName)
         if len(locators) == 3 and not type:
             type = locators[2]
-        element = self.driver.finds_element(locators[0], locators[1], type=type)
+        element = self.driver.find_elements(locators[0], locators[1], type=type)
         return element
 
     def find_element(self, *args, **kwargs):
