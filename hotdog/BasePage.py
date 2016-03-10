@@ -1,4 +1,28 @@
 from hotdog import Mustard
+from hotdog.BaseDriver import get_driver
+
+def is_element_present(self, element_name, just_in_dom=False, timeout=0):
+    def _get_driver():
+        driver = getattr(self, '_driver', None)
+        if driver:
+            return driver
+        return get_driver()
+
+    _get_driver().implicitly_wait(timeout)
+    try:
+        def is_displayed():
+            element = getattr(self, element_name, None)
+            if not element:
+                raise Exception('No element "%s" within container %s' % (element_name, self))
+            return element.is_displayed()
+
+        is_displayed() if just_in_dom else wait(lambda: is_displayed(), timeout_seconds=timeout)
+        return True
+    except Exception:
+        return False
+    except TimeoutError:
+        return False
+
 
 class HotDogBasePage(object):
 
