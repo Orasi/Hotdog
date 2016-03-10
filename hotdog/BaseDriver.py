@@ -26,6 +26,6 @@ class BaseWebDriver(WebDriver):
         for element in elements:
             element.__class__ = klass
 
-        if hasattr(self, 'debug'):
-            element.debug = self.debug
+            if hasattr(self, 'debug'):
+                element.debug = self.debug
         return elements

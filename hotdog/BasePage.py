@@ -106,7 +106,7 @@ class HotDogBasePage(object):
     def open(self):
         if not self.url:
             raise Exception('Can\'t open page without url')
-        self._driver.get(self.url)
+        self.driver.get(self.url)
 
     def implicitly_wait(self, *args):
-        return self._driver.implicitly_wait(*args)
+        return self.driver.implicitly_wait(*args)
