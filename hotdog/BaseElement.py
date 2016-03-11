@@ -97,10 +97,6 @@ class BaseElement(WebElement):
     def jsClick(self):
         self.javascript('this.click()')
 
-    def jsHover(self):
-        mouseOverScript = "if(document.createEvent){var evObj = document.createEvent('MouseEvents');evObj.initEvent('mouseover',true, false); arguments[0].dispatchEvent(evObj);} else if(document.createEventObject) { arguments[0].fireEvent('onmouseover');}";
-        self.javascript(mouseOverScript)
-
     def focus(self):
         self.javascript('this.focus()')
 
