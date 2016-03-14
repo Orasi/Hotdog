@@ -1,0 +1,92 @@
+<SauceNodes>
+    <node>
+        <platform>web</platform>
+        <platformName>Mac OS X 10.11</platformName>
+        <browserName>safari</browserName>
+        <version>9</version>
+    </node>
+
+    <node>
+        <platform>web</platform>
+        <platformName>Mac OS X 10.10</platformName>
+        <browserName>safari</browserName>
+        <version>8</version>
+    </node>
+
+    <node>
+        <platform>web</platform>
+        <platformName>Windows 8.1</platformName>
+        <browserName>firefox</browserName>
+        <version>43</version>
+    </node>
+
+    <node>
+        <platform>web</platform>
+        <platformName>Windows 8.1</platformName>
+        <browserName>firefox</browserName>
+        <version>44</version>
+    </node>
+
+    <node>
+        <platform>web</platform>
+        <platformName>Mac OS X 10.11</platformName>
+        <browserName>firefox</browserName>
+        <version>43</version>
+    </node>
+
+    <node>
+        <platform>web</platform>
+        <platformName>Mac OS X 10.11</platformName>
+        <browserName>firefox</browserName>
+        <version>44</version>
+    </node>
+
+    <node>
+        <platform>web</platform>
+        <platformName>Windows 8.1</platformName>
+        <browserName>chrome</browserName>
+        <version>47</version>
+    </node>
+
+    <node>
+        <platform>web</platform>
+        <platformName>Windows 8.1</platformName>
+        <browserName>chrome</browserName>
+        <version>48</version>
+    </node>
+
+    <node>
+        <platform>web</platform>
+        <platformName>Mac OS X 10.11</platformName>
+        <browserName>chrome</browserName>
+        <version>47</version>
+    </node>
+
+    <node>
+        <platform>web</platform>
+        <platformName>Mac OS X 10.11</platformName>
+        <browserName>chrome</browserName>
+        <version>48</version>
+    </node>
+
+    <node>
+        <platform>web</platform>
+        <platformName>Windows 8.1</platformName>
+        <browserName>internet explorer</browserName>
+        <version>11</version>
+    </node>
+
+    <node>
+        <platform>web</platform>
+        <platformName>Windows 8</platformName>
+        <browserName>internet explorer</browserName>
+        <version>10</version>
+    </node>
+
+    <node>
+        <platform>web</platform>
+        <platformName>Windows 10</platformName>
+        <browserName>microsoftedge</browserName>
+        <version>13</version>
+    </node>
+</SauceNodes>

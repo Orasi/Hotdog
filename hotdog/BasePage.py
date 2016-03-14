@@ -2,7 +2,7 @@ from selenium.common.exceptions import WebDriverException
 
 from hotdog import Mustard
 from hotdog.BaseDriver import get_driver
-from waiting import wait as wait_lib
+from waiting import wait
 
 class HotDogBasePage(object):
 
@@ -144,5 +144,6 @@ class HotDogBasePage(object):
         """
         kwargs.setdefault('sleep_seconds', (1, None))
         kwargs.setdefault('expected_exceptions', WebDriverException)
+        kwargs.setdefault('timeout_seconds', 30)
 
-        return wait_lib(*args, **kwargs)
+        return wait(*args, **kwargs)

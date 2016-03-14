@@ -14,6 +14,7 @@ import webium.settings
 from hotdog.BaseDriver import BaseWebDriver
 webium.settings.implicit_timeout = 5
 
+
 class HotDogBaseTest(unittest.TestCase):
 
     #Boilerplate Settings Do not Change
