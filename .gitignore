@@ -44,4 +44,4 @@ crashlytics-build.properties
 fabric.properties
 **/__pycache__
 .idea
-hotdog/test/Config.xml
+test/Config.xml
