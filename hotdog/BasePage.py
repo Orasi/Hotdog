@@ -2,7 +2,7 @@ from selenium.common.exceptions import WebDriverException
 
 from hotdog import Mustard
 from hotdog.BaseDriver import get_driver
-from waiting import wait
+from waiting import wait as wait_lib
 
 class HotDogBasePage(object):
 
@@ -130,20 +130,19 @@ class HotDogBasePage(object):
                     raise Exception('No element "%s" within container %s' % (element_name, self))
                 return element.is_displayed()
 
-            is_displayed() if just_in_dom else self._wait(lambda: is_displayed(), timeout_seconds=timeout)
+            is_displayed() if just_in_dom else self.wait(lambda: is_displayed(), timeout_seconds=timeout)
             return True
         except Exception:
             return False
         except TimeoutError:
             return False
 
-    def _wait(*args, **kwargs):
+    def wait(*args, **kwargs):
         """
         Wrapping 'wait()' method of 'waiting' library with default parameter values.
         WebDriverException is ignored in the expected exceptions by default.
         """
         kwargs.setdefault('sleep_seconds', (1, None))
         kwargs.setdefault('expected_exceptions', WebDriverException)
-        kwargs.setdefault('timeout_seconds', 30)
 
-        return wait(*args, **kwargs)
+        return wait_lib(*args, **kwargs)
