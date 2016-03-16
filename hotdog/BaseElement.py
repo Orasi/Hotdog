@@ -1,13 +1,14 @@
 import time
 
 from selenium.common.exceptions import WebDriverException
-from selenium.webdriver.support.wait import WebDriverWait
-from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver import ActionChains
 from selenium.webdriver.common.by import By
 from selenium.webdriver.remote.webdriver import WebElement
+from selenium.webdriver.support import expected_conditions as EC
+from selenium.webdriver.support.wait import WebDriverWait
 from waiting import wait as wait_lib
-from hotdog.Conditions import Conditions as EC2
+
+from hotdog import Conditions as EC2
 
 
 class BaseElement(WebElement):
