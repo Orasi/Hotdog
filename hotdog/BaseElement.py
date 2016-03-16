@@ -71,17 +71,21 @@ class BaseElement(WebElement):
             parent.find_element(self.search_by[0], self.search_by[1])
         else:
             self.driver.find_element(self.search_by[0], self.search_by[1])
+        return self
 
     def javascript_async(self, script):
         script = script.replace("this", 'arguments[0]')
         self.driver.execute_async_script(script, self)
+        return self
 
     def javascript(self, script):
         script = script.replace("this", 'arguments[0]')
         self.driver.execute_script(script, self)
+        return self
 
     def highlight(self):
         self.javascript("this.style.border='3px solid yellow'")
+        return self
 
     def flash(self):
         self.javascript("this.style.border='3px solid yellow'")
@@ -95,34 +99,40 @@ class BaseElement(WebElement):
         self.javascript("this.style.border='3px solid yellow'")
         time.sleep(0.5)
         self.javascript("this.style.border='0px'")
+        return self
 
     def set(self, text):
         if self.debug:
             self.flash()
         super().send_keys(text)
+        return self
 
     def clear(self):
         if self.debug:
             self.flash()
         super().clear()
+        return self
 
     def send_keys(self, *value):
-        self.set(value)
+        return self.set(value)
 
     def click(self):
         if self.debug:
             self.flash()
         super().click()
+        return self
 
     def jsClick(self):
         if self.debug:
             self.flash()
         self.javascript('this.click()')
+        return self
 
     def focus(self):
         if self.debug:
             self.flash()
         self.javascript('this.focus()')
+        return self
 
     def hover(self):
         '''
@@ -134,9 +144,11 @@ class BaseElement(WebElement):
             self.flash()
         hov = ActionChains(self.driver).move_to_element(self)
         hov.perform()
+        return self
 
     def scrollIntoView(self):
         self.javascript('this.scrollIntoView()')
+        return self
 
     def tap(self):
         location = self.location
@@ -145,12 +157,13 @@ class BaseElement(WebElement):
         y_loc = location['y'] + (size['height']/2)
         loc = (x_loc, y_loc)
         self.driver.tap([loc])
+        return self
 
     def is_displayed(self, timeout=0):
-        self.is_present(timeout=timeout)
+        return self.is_present(timeout=timeout)
 
     def is_not_displayed(self, timeout=0):
-        self.is_not_present(timeout=timeout)
+        return self.is_not_present(timeout=timeout)
 
     def is_present(self, timeout=0):
         start = time.time()
@@ -218,6 +231,7 @@ class BaseElement(WebElement):
         :param ignore_case:   Optional Parameter to ignore case when matching
         '''
         WebDriverWait(self.driver, timeout).until(EC2.wait_for_text_to_start_with(self, text, ignore_case=ignore_case))
+        return self
 
     def sync_text_ends_with(self, text, timeout=30, ignore_case=False):
         ''' Waits for text attribute of element to end with provided string
@@ -226,6 +240,7 @@ class BaseElement(WebElement):
         :param ignore_case:  Optional Parameter to ignore case when matching
         '''
         WebDriverWait(self.driver, timeout).until(EC2.wait_for_text_to_end_with(self, text, ignore_case=ignore_case))
+        return self
 
     def sync_text_contains(self, text, timeout=30, ignore_case=False):
         ''' Waits for text attribute of element to contain provided string
@@ -234,18 +249,21 @@ class BaseElement(WebElement):
         :param ignore_case:  Optional Parameter to ignore case when matching
         '''
         WebDriverWait(self.driver, timeout).until(EC2.wait_for_text_to_contain(self, text, ignore_case=ignore_case))
+        return self
 
     def sync_enabled(self, timeout=30):
         ''' Waits for element to clickable
         :param timeout:   Allowed Time
         '''
         WebDriverWait(self.driver, timeout).until(EC.element_to_be_clickable(self.search_by))
+        return self
 
     def sync_disabled(self, timeout=30):
         ''' Waits for element to not be clickable
         :param timeout:   Allowed Time
         '''
         WebDriverWait(self.driver, timeout).until(not EC.element_to_be_clickable(self.search_by))
+        return self
 
     def sync_attribute_value(self, attribute, value, timeout=30):
         ''' Waits for element attribute to have value
@@ -254,6 +272,7 @@ class BaseElement(WebElement):
         :param timeout:   Allowed Time
         '''
         WebDriverWait(self.driver, timeout).until(EC2.wait_for_attribute_value(self))
+        return self
 
     def sync_not_attribute_value(self, attribute, value, timeout=30):
         ''' Waits for element attribute to have value
@@ -262,11 +281,14 @@ class BaseElement(WebElement):
         :param timeout:   Allowed Time
         '''
         WebDriverWait(self.driver, timeout).until(not EC2.wait_for_attribute_value(self))
+        return self
 
     def sync_css_value(self, attribute, value, timeout=30):
         WebDriverWait(self.driver, timeout).until(EC2.wait_for_css_attribute_value(self))
+        return self
 
     def sync_not_css_value(self, attribute, value, timeout=30):
         WebDriverWait(self.driver, timeout).until(not EC2.wait_for_css_attribute_value(self))
+        return self
 
     #Todo: Add Regex support for all conditions that use text
