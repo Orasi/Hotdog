@@ -214,8 +214,7 @@ class BaseElement(WebElement):
             return False
 
     def wait(self, *args, **kwargs):
-        '''
-        Wrapping 'wait()' method of 'waiting' library with default parameter values.
+        ''' Wrapping 'wait()' method of 'waiting' library with default parameter values.
         WebDriverException is ignored in the expected exceptions by default.
         '''
         kwargs.setdefault('sleep_seconds', (1, None))

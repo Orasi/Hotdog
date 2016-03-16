@@ -1,3 +1,4 @@
+import time
 from selenium.common.exceptions import WebDriverException
 
 from hotdog import Mustard
@@ -23,6 +24,15 @@ class HotDogBasePage(object):
     def __init__(self, driver=None, url=None):
         self.driver = driver
         self.url = url
+
+    def sync(self, timeout=20):
+        wait_time = self.driver.implicitly_wait()
+        self.driver.implicitly_wait(timeout)
+        if hasattr(self, 'sync_element'):
+            self.find('sync_element')
+        else:
+            time.sleep(5)
+        self.driver.implicitly_wait(wait_time)
 
     def find(self, objectName, type=None):
         locators = getattr(self, objectName)
