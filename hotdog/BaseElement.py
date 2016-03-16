@@ -150,6 +150,16 @@ class BaseElement(WebElement):
         self.javascript('this.scrollIntoView()')
         return self
 
+    def scrollIntoViewCenter(self):
+        # scrollIntoView scrolls untill object at top of screen
+        # the next javascript scrolls down half a page (1/2 the viewport height)
+        # scrollTop works differently on chrome & firefox:   http://stackoverflow.com/a/28488360
+        # the '||' handles this
+        # have not tested on
+        self.javascript('this.scrollIntoView()')
+        self.javascript('window.scrollTo(0, (document.documentElement.scrollTop || document.body.scrollTop) - window.innerHeight / 2)')
+
+
     def tap(self):
         location = self.location
         size = self.size
