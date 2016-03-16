@@ -1,5 +1,5 @@
 import time
-
+from selenium.webdriver.common.action_chains import ActionChains
 from selenium.webdriver.common.by import By
 from selenium.webdriver.remote.webdriver import WebElement
 
@@ -111,6 +111,9 @@ class BaseElement(WebElement):
         loc = (x_loc, y_loc)
         self.driver.tap([loc])
 
+    def hover(self):
+        hov = ActionChains(self.driver).move_to_element(self)
+        hov.perform()
         #
         # syncPresent
         # syncGone
