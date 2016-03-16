@@ -1,5 +1,6 @@
 from selenium.common.exceptions import WebDriverException
 
+from random import randint
 from hotdog import Mustard
 from hotdog.BaseDriver import get_driver
 from waiting import wait
@@ -147,3 +148,18 @@ class HotDogBasePage(object):
         kwargs.setdefault('timeout_seconds', 30)
 
         return wait(*args, **kwargs)
+
+    def get_random_element(self, collection):
+        '''Returns a random collection element.
+        :param collection: The collection to get a random element from.
+        :return: A randomly selected element.
+        '''
+        if isinstance(collection, (list, dict)):
+
+            if len(collection) == 0:
+                raise Exception('Collection doesnt have any elements.')
+
+            index = randint(0, len(collection) - 1)
+            return collection[index]
+        else:
+            raise Exception('The passed in argument for get_random_element(self, collection) must be a collection.')
