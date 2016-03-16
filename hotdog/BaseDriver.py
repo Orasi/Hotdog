@@ -9,17 +9,22 @@ class BaseWebDriver(WebDriver):
     def browser(self):
         pass
     def find_element(self, by=By.ID, value=None, type=None):
+
         element =  super().find_element(by, value)
         if type:
             element.__class__ = type
         else:
             element.__class__ = BaseElement
 
+        element.search_by = (by, value)
+
         if hasattr(self, 'debug'):
             element.debug = self.debug
         return element
 
     def find_elements(self, by=By.ID, value=None, type=None):
+        self.search_by = (by, value)
+
         elements =  super().find_elements(by, value)
         if type:
              klass = type
@@ -28,7 +33,7 @@ class BaseWebDriver(WebDriver):
 
         for element in elements:
             element.__class__ = klass
-
+            element.search_by = (by, value)
             if hasattr(self, 'debug'):
                 element.debug = self.debug
         return elements

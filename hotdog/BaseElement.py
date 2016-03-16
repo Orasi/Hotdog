@@ -1,9 +1,14 @@
 import time
 
+from selenium.common.exceptions import WebDriverException
+from selenium.webdriver.support.wait import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
+from hotdog.BaseDriver import get_driver
+from selenium.webdriver import ActionChains
 from selenium.webdriver.common.by import By
 from selenium.webdriver.remote.webdriver import WebElement
-
-from hotdog.Retry import Retry
+from waiting import wait as wait_lib
+from hotdog.Conditions import Conditions as EC2
 
 
 class BaseElement(WebElement):
@@ -38,7 +43,7 @@ class BaseElement(WebElement):
              klass = type
         else:
             klass = BaseElement
-
+        element.search_by = (by, value, self)
         element.__class__ = klass
 
         if hasattr(self, 'debug'):
@@ -54,10 +59,18 @@ class BaseElement(WebElement):
 
         for element in elements:
             element.__class__ = klass
-
+            element.search_by = (by, value, self)
             if hasattr(self, 'debug'):
                 element.debug = self.debug
         return elements
+
+    def reload(self):
+        if len(self.search_by) == 3:
+            parent = self.search_by[2]
+            parent.reload()
+            parent.find_element(self.search_by[0], self.search_by[1])
+        else:
+            self.driver.find_element(self.search_by[0], self.search_by[1])
 
     def javascript_async(self, script):
         script = script.replace("this", 'arguments[0]')
@@ -88,17 +101,39 @@ class BaseElement(WebElement):
             self.flash()
         super().send_keys(text)
 
+    def clear(self):
+        if self.debug:
+            self.flash()
+        super().clear()
+
+    def send_keys(self, *value):
+        self.set(value)
+
     def click(self):
         if self.debug:
             self.flash()
-
         super().click()
 
     def jsClick(self):
+        if self.debug:
+            self.flash()
         self.javascript('this.click()')
 
     def focus(self):
+        if self.debug:
+            self.flash()
         self.javascript('this.focus()')
+
+    def hover(self):
+        '''
+        Performs Action Chain Hover on element
+        :Note: Does not work in Safari Driver
+        '''
+        #Todo: Add check for Safari driver and throw exception
+        if self.debug:
+            self.flash()
+        hov = ActionChains(self.driver).move_to_element(self)
+        hov.perform()
 
     def scrollIntoView(self):
         self.javascript('this.scrollIntoView()')
@@ -111,41 +146,127 @@ class BaseElement(WebElement):
         loc = (x_loc, y_loc)
         self.driver.tap([loc])
 
-        #
-        # syncPresent
-        # syncGone
-        #
-        # syncVisible
-        # sync hidden
-        #
-        # syncText
-        #
-        # sync enabled
-        # syncDisabled
-        #
-        # sync attribute contains value
-        # sync css property contains value
-        #
-        # sync attribute matches value
-        # sync css property matches value
-        #
-        # clear
-        # set
-        #
-        # dimensions
-        # location
-        # tagname
-        # class
-        # id
-        # css_property
-        #
-        # getLocation
-        #     middle
-        #     top-left
-        #     topright
-        #     topmiddle
-        #     rightmiddle
-        #     leftmiddle
-        #     bottommiddle
-        #     bottomright
-        #     bottomleft
+    def is_displayed(self, timeout=0):
+        self.is_present(timeout=timeout)
+
+    def is_not_displayed(self, timeout=0):
+        self.is_not_present(timeout=timeout)
+
+    def is_present(self, timeout=0):
+        start = time.time()
+        elapsed = 0
+        while True:
+            try:
+                if super().is_displayed():
+                    return True
+                if elapsed > timeout:
+                    return False
+            except:
+                if elapsed > timeout:
+                    return False
+
+    def is_not_present(self, timeout=None):
+        start = time.time()
+        elapsed = 0
+        while True:
+            try:
+                if not super().is_displayed():
+                    return True
+                if elapsed > timeout:
+                    return False
+            except:
+                if elapsed > timeout:
+                    return False
+
+    def is_element_present(self, element_name, just_in_dom=False, timeout=0):
+        def _get_driver():
+            driver = getattr(self, 'driver', None)
+            if driver:
+                return driver
+            return get_driver()
+
+        _get_driver().implicitly_wait(timeout)
+        try:
+            def is_displayed():
+                element = getattr(self, element_name, None)
+                if not element:
+                    raise Exception('No element "%s" within container %s' % (element_name, self))
+                return element.is_displayed()
+
+            is_displayed() if just_in_dom else self.wait(lambda: is_displayed(), timeout_seconds=timeout)
+            return True
+        except Exception:
+            return False
+        except TimeoutError:
+            return False
+
+    def wait(self, *args, **kwargs):
+        '''
+        Wrapping 'wait()' method of 'waiting' library with default parameter values.
+        WebDriverException is ignored in the expected exceptions by default.
+        '''
+        kwargs.setdefault('sleep_seconds', (1, None))
+        kwargs.setdefault('expected_exceptions', WebDriverException)
+        kwargs.setdefault('timeout_seconds', 30)
+
+        return wait_lib(*args, **kwargs)
+
+    def sync_text_starts_with(self, text, timeout=30, ignore_case=False):
+        ''' Waits for text attribute of element to start with provided string
+        :param text:   String for matching
+        :param timeout:   Allowed Time
+        :param ignore_case:   Optional Parameter to ignore case when matching
+        '''
+        WebDriverWait(self.driver, timeout).until(EC2.wait_for_text_to_start_with(self, text, ignore_case=ignore_case))
+
+    def sync_text_ends_with(self, text, timeout=30, ignore_case=False):
+        ''' Waits for text attribute of element to end with provided string
+        :param text:   String for matching
+        :param timeout:   Allowed Time
+        :param ignore_case:  Optional Parameter to ignore case when matching
+        '''
+        WebDriverWait(self.driver, timeout).until(EC2.wait_for_text_to_end_with(self, text, ignore_case=ignore_case))
+
+    def sync_text_contains(self, text, timeout=30, ignore_case=False):
+        ''' Waits for text attribute of element to contain provided string
+        :param text:   String for matching
+        :param timeout:   Allowed Time
+        :param ignore_case:  Optional Parameter to ignore case when matching
+        '''
+        WebDriverWait(self.driver, timeout).until(EC2.wait_for_text_to_contain(self, text, ignore_case=ignore_case))
+
+    def sync_enabled(self, timeout=30):
+        ''' Waits for element to clickable
+        :param timeout:   Allowed Time
+        '''
+        WebDriverWait(self.driver, timeout).until(EC.element_to_be_clickable(self.search_by))
+
+    def sync_disabled(self, timeout=30):
+        ''' Waits for element to not be clickable
+        :param timeout:   Allowed Time
+        '''
+        WebDriverWait(self.driver, timeout).until(not EC.element_to_be_clickable(self.search_by))
+
+    def sync_attribute_value(self, attribute, value, timeout=30):
+        ''' Waits for element attribute to have value
+        :param attribute:  Attribute name to match
+        :param value:    Value to match
+        :param timeout:   Allowed Time
+        '''
+        WebDriverWait(self.driver, timeout).until(EC2.wait_for_attribute_value(self))
+
+    def sync_not_attribute_value(self, attribute, value, timeout=30):
+        ''' Waits for element attribute to have value
+        :param attribute:  Attribute name to match
+        :param value:    Value to match
+        :param timeout:   Allowed Time
+        '''
+        WebDriverWait(self.driver, timeout).until(not EC2.wait_for_attribute_value(self))
+
+    def sync_css_value(self, attribute, value, timeout=30):
+        WebDriverWait(self.driver, timeout).until(EC2.wait_for_css_attribute_value(self))
+
+    def sync_not_css_value(self, attribute, value, timeout=30):
+        WebDriverWait(self.driver, timeout).until(not EC2.wait_for_css_attribute_value(self))
+
+    #Todo: Add Regex support for all conditions that use text

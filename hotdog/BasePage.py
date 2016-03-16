@@ -20,6 +20,10 @@ class HotDogBasePage(object):
         else:
             return super().__new__(cls)
 
+    def __init__(self, driver=None, url=None):
+        self.driver = driver
+        self.url = url
+
     def find(self, objectName, type=None):
         locators = getattr(self, objectName)
         if len(locators) == 3 and not type:
@@ -40,31 +44,8 @@ class HotDogBasePage(object):
     def find_elements(self, *args, **kwargs):
         return self.driver.find_elements(*args, **kwargs)
 
-    def __init__(self, driver=None, url=None):
-        self.driver = driver
-        self.url = url
-
-    def uploadScreenshot(self, test, name=None):
-        Mustard.UploadScreenshot(self, test, name);
-
-    def reload(self, sync=True):
-        self = self.__class__(driver=self._driver, sync=sync)
-        return self
-
-    def assert_element_present(self, elementName, timeout=10):
-        assert self.is_element_present(elementName, timeout=timeout), 'The element [%s] was not found after [%s] seconds' % (elementName, timeout)
-
-    def tap_on_element(self, element):
-        location = element.location
-        size = element.size
-        x_loc = location['x'] + (size['width']/2)
-        y_loc = location['y'] + (size['height']/2)
-        loc = (x_loc, y_loc)
-        self.driver.tap([loc])
-
     def back(self):
         self.driver.execute_script("window.history.go(-1)");
-
 
     def swipe(self, direction, element=None, duration=None):
         if element:
@@ -137,6 +118,9 @@ class HotDogBasePage(object):
         except TimeoutError:
             return False
 
+    def assert_element_present(self, elementName, timeout=10):
+        assert self.is_element_present(elementName, timeout=timeout), 'The element [%s] was not found after [%s] seconds' % (elementName, timeout)
+
     def wait(self, *args, **kwargs):
         """
         Wrapping 'wait()' method of 'waiting' library with default parameter values.
@@ -147,3 +131,6 @@ class HotDogBasePage(object):
         kwargs.setdefault('timeout_seconds', 30)
 
         return wait(*args, **kwargs)
+
+    def uploadScreenshot(self, test, name=None):
+        Mustard.UploadScreenshot(self, test, name);
