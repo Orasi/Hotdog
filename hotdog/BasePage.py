@@ -1,6 +1,7 @@
 import time
 from selenium.common.exceptions import WebDriverException
 
+from random import randint
 from hotdog import Mustard
 from hotdog.BaseDriver import get_driver
 from waiting import wait
@@ -144,3 +145,15 @@ class HotDogBasePage(object):
 
     def uploadScreenshot(self, test, name=None):
         Mustard.UploadScreenshot(self, test, name);
+
+    def get_random_element(self, object_name, type=None):
+        '''Returns a random collection element.
+        :param object_name: the object name
+        :return: randomly selected element
+        '''
+        locators = getattr(self, object_name)
+        if len(locators) == 3 and not type:
+            type = locators[2]
+        elements = self.driver.find_elements(locators[0], locators[1], type=type)
+        index = randint(0, len(elements) - 1)
+        return elements[index]
