@@ -5,6 +5,7 @@ hotdog/BaseDriver.py
 hotdog/BaseElement.py
 hotdog/BasePage.py
 hotdog/BaseTest.py
+hotdog/Conditions.py
 hotdog/Config.py
 hotdog/FilePath.py
 hotdog/FindEither.py

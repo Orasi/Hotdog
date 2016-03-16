@@ -12,7 +12,7 @@ os.environ['PROJECTFOLDER'] = get_full_path('') + 'test'
 from appium_selector.DeviceSelector import DeviceSelector
 
 
-os.environ['AddMustard'] = 'False'
+os.environ['AddMustard'] = 'True'
 
 
 builtins.threadlocal = threading.local()
@@ -29,6 +29,7 @@ def run_all_test(device=None):
 
 threads =[]
 for device in DeviceSelector(True, platform='desktop').getDevice(filter='.*Sauce.*'):
+    device['options']['mustard'] = True
     t = threading.Thread(target=run_all_test, args=[device])
     threads.append(t)
     t.start()

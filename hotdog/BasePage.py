@@ -1,6 +1,6 @@
+import time
 from selenium.common.exceptions import WebDriverException
 
-from random import randint
 from hotdog import Mustard
 from hotdog.BaseDriver import get_driver
 from waiting import wait
@@ -20,6 +20,19 @@ class HotDogBasePage(object):
                 return super().__new__(cls)
         else:
             return super().__new__(cls)
+
+    def __init__(self, driver=None, url=None):
+        self.driver = driver
+        self.url = url
+
+    def sync(self, timeout=20):
+        wait_time = self.driver.implicitly_wait()
+        self.driver.implicitly_wait(timeout)
+        if hasattr(self, 'sync_element'):
+            self.find('sync_element')
+        else:
+            time.sleep(5)
+        self.driver.implicitly_wait(wait_time)
 
     def find(self, objectName, type=None):
         locators = getattr(self, objectName)
@@ -41,31 +54,8 @@ class HotDogBasePage(object):
     def find_elements(self, *args, **kwargs):
         return self.driver.find_elements(*args, **kwargs)
 
-    def __init__(self, driver=None, url=None):
-        self.driver = driver
-        self.url = url
-
-    def uploadScreenshot(self, test, name=None):
-        Mustard.UploadScreenshot(self, test, name);
-
-    def reload(self, sync=True):
-        self = self.__class__(driver=self._driver, sync=sync)
-        return self
-
-    def assert_element_present(self, elementName, timeout=10):
-        assert self.is_element_present(elementName, timeout=timeout), 'The element [%s] was not found after [%s] seconds' % (elementName, timeout)
-
-    def tap_on_element(self, element):
-        location = element.location
-        size = element.size
-        x_loc = location['x'] + (size['width']/2)
-        y_loc = location['y'] + (size['height']/2)
-        loc = (x_loc, y_loc)
-        self.driver.tap([loc])
-
     def back(self):
         self.driver.execute_script("window.history.go(-1)");
-
 
     def swipe(self, direction, element=None, duration=None):
         if element:
@@ -138,6 +128,9 @@ class HotDogBasePage(object):
         except TimeoutError:
             return False
 
+    def assert_element_present(self, elementName, timeout=10):
+        assert self.is_element_present(elementName, timeout=timeout), 'The element [%s] was not found after [%s] seconds' % (elementName, timeout)
+
     def wait(self, *args, **kwargs):
         """
         Wrapping 'wait()' method of 'waiting' library with default parameter values.
@@ -149,14 +142,5 @@ class HotDogBasePage(object):
 
         return wait(*args, **kwargs)
 
-    def get_random_element(self, object_name, type=None):
-        '''Returns a random collection element.
-        :param object_name: The object name
-        :return: A randomly selected element.
-        '''
-        locators = getattr(self, object_name)
-        if len(locators) == 3 and not type:
-            type = locators[2]
-        elements = self.driver.find_elements(locators[0], locators[1], type=type)
-        index = randint(0, len(elements) - 1)
-        return elements[index]
+    def uploadScreenshot(self, test, name=None):
+        Mustard.UploadScreenshot(self, test, name);
