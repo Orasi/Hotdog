@@ -167,28 +167,28 @@ class BaseElement(WebElement):
 
     def is_present(self, timeout=0):
         start = time.time()
-        elapsed = 0
         while True:
             try:
                 if super().is_displayed():
                     return True
-                if elapsed > timeout:
+                if time.time() - start > timeout:
                     return False
             except:
-                if elapsed > timeout:
+                if time.time() - start > timeout:
                     return False
 
     def is_not_present(self, timeout=None):
         start = time.time()
-        elapsed = 0
         while True:
             try:
                 if not super().is_displayed():
                     return True
-                if elapsed > timeout:
+
+                if time.time() - start > timeout:
                     return False
+
             except:
-                if elapsed > timeout:
+                if time.time() - start > timeout:
                     return False
 
     def is_element_present(self, element_name, just_in_dom=False, timeout=0):
