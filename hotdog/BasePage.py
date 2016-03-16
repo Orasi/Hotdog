@@ -149,17 +149,14 @@ class HotDogBasePage(object):
 
         return wait(*args, **kwargs)
 
-    def get_random_element(self, collection):
+    def get_random_element(self, object_name, type=None):
         '''Returns a random collection element.
-        :param collection: The collection to get a random element from.
+        :param object_name: The object name
         :return: A randomly selected element.
         '''
-        if isinstance(collection, (list, dict)):
-
-            if len(collection) == 0:
-                raise Exception('Collection doesnt have any elements.')
-
-            index = randint(0, len(collection) - 1)
-            return collection[index]
-        else:
-            raise Exception('The passed in argument for get_random_element(self, collection) must be a collection.')
+        locators = getattr(self, object_name)
+        if len(locators) == 3 and not type:
+            type = locators[2]
+        elements = self.driver.find_elements(locators[0], locators[1], type=type)
+        index = randint(0, len(elements) - 1)
+        return elements[index]
