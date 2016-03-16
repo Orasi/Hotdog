@@ -38,7 +38,6 @@ class BaseWebDriver(WebDriver):
                 element.debug = self.debug
         return elements
 
-
 def get_driver():
     global _driver_instance
     if not _driver_instance:

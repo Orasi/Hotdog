@@ -3,7 +3,6 @@ import time
 from selenium.common.exceptions import WebDriverException
 from selenium.webdriver.support.wait import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
-from hotdog.BaseDriver import get_driver
 from selenium.webdriver import ActionChains
 from selenium.webdriver.common.by import By
 from selenium.webdriver.remote.webdriver import WebElement
@@ -183,7 +182,7 @@ class BaseElement(WebElement):
             driver = getattr(self, 'driver', None)
             if driver:
                 return driver
-            return get_driver()
+            return self.driver
 
         _get_driver().implicitly_wait(timeout)
         try:
