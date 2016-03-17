@@ -239,14 +239,10 @@ class BaseElement(WebElement):
 
         _get_driver().implicitly_wait(timeout)
         try:
-            def is_displayed():
-                element = getattr(self, element_name, None)
-                element = self.find_element(element[0], element[1])
-                if not element:
-                    raise Exception('No element "%s" within container %s' % (element_name, self))
-                return element.is_displayed()
+            element = getattr(self, element_name, None)
+            element = self.find_element(element[0], element[1])
 
-            is_displayed() if just_in_dom else self.wait(lambda: is_displayed(), timeout_seconds=timeout)
+            element.is_displayed(timeout=0) if just_in_dom else element.is_displayed(timeout=timeout)
             return True
         except Exception:
             return False
