@@ -241,7 +241,7 @@ class BaseElement(WebElement):
         try:
             def is_displayed():
                 element = getattr(self, element_name, None)
-                element = self.find_element(element)
+                element = self.find_element(element[0], element[1])
                 if not element:
                     raise Exception('No element "%s" within container %s' % (element_name, self))
                 return element.is_displayed()
