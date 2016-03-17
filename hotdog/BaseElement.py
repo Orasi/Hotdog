@@ -56,7 +56,7 @@ class BaseElement(WebElement):
              klass = type
         else:
             klass = BaseElement
-        element.search_by = (by, value, type)
+        element.search_by = (by, value, type, self)
         element.__class__ = klass
 
         if hasattr(self, 'debug'):
@@ -72,18 +72,18 @@ class BaseElement(WebElement):
 
         for element in elements:
             element.__class__ = klass
-            element.search_by = (by, value, type)
+            element.search_by = (by, value, type, self)
             if hasattr(self, 'debug'):
                 element.debug = self.debug
         return elements
 
     def reload(self):
-        if len(self.search_by) == 3:
-            parent = self.search_by[2]
+        if len(self.search_by) == 4:
+            parent = self.search_by[3]
             parent.reload()
-            element = parent.find_element(self.search_by[0], self.search_by[1])
+            element = parent.find_element(self.search_by[0], self.search_by[1], self.search_by[2])
         else:
-            element = self.driver.find_element(self.search_by[0], self.search_by[1])
+            element = self.driver.find_element(self.search_by[0], self.search_by[1], self.search_by[2])
         return element
 
     def javascript_async(self, script):
