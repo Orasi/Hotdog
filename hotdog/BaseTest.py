@@ -81,7 +81,7 @@ class HotDogBaseTest(unittest.TestCase):
                     builtins.threadlocal.driver = seleniumWebdriver.Firefox()
                 elif provider.lower() == 'local-ie':
                     runLocal = True
-                    driver = seleniumWebdriver.Ie()
+                    builtins.threadlocal.driver = seleniumWebdriver.Ie()
                 else:
                     url = GetConfig('GRID_URL') + '/wd/hub'
 
