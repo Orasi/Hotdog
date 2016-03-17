@@ -16,7 +16,7 @@ class BaseWebDriver(WebDriver):
         else:
             element.__class__ = BaseElement
 
-        element.search_by = (by, value)
+        element.search_by = (by, value, type)
 
         if hasattr(self, 'debug'):
             element.debug = self.debug
@@ -33,7 +33,7 @@ class BaseWebDriver(WebDriver):
 
         for element in elements:
             element.__class__ = klass
-            element.search_by = (by, value)
+            element.search_by = (by, value, type)
             if hasattr(self, 'debug'):
                 element.debug = self.debug
         return elements

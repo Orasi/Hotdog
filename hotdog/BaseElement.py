@@ -56,7 +56,7 @@ class BaseElement(WebElement):
              klass = type
         else:
             klass = BaseElement
-        element.search_by = (by, value, self)
+        element.search_by = (by, value, type)
         element.__class__ = klass
 
         if hasattr(self, 'debug'):
@@ -72,7 +72,7 @@ class BaseElement(WebElement):
 
         for element in elements:
             element.__class__ = klass
-            element.search_by = (by, value, self)
+            element.search_by = (by, value, type)
             if hasattr(self, 'debug'):
                 element.debug = self.debug
         return elements
