@@ -81,10 +81,10 @@ class BaseElement(WebElement):
         if len(self.search_by) == 3:
             parent = self.search_by[2]
             parent.reload()
-            parent.find_element(self.search_by[0], self.search_by[1])
+            element = parent.find_element(self.search_by[0], self.search_by[1])
         else:
-            self.driver.find_element(self.search_by[0], self.search_by[1])
-        return self
+            element = self.driver.find_element(self.search_by[0], self.search_by[1])
+        return element
 
     def javascript_async(self, script):
         script = script.replace("this", 'arguments[0]')
