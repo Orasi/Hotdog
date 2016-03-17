@@ -1,4 +1,5 @@
 import time
+from random import randint
 
 from selenium.common.exceptions import WebDriverException
 from selenium.webdriver import ActionChains
@@ -36,6 +37,18 @@ class BaseElement(WebElement):
             type = locators[2]
         elements = self.find_elements(locators[0], locators[1], type=type)
         return elements
+
+    def find_random(self, object_name, type=None):
+        '''Returns a random collection element.
+        :param object_name: the object name
+        :return: randomly selected element
+        '''
+        locators = getattr(self, object_name)
+        if len(locators) == 3 and not type:
+            type = locators[2]
+        elements = self.find_elements(locators[0], locators[1], type=type)
+        index = randint(0, len(elements) - 1)
+        return elements[index]
 
     def find_element(self, by=By.ID, value=None, type=None):
         element =  super().find_element(by, value)
@@ -170,12 +183,24 @@ class BaseElement(WebElement):
         return self
 
     def is_displayed(self, timeout=0):
+        '''Overrides default implementation of is_displayed to allow an optional timeout
+        :param timeout: Allowed Time for element to appear
+        :return: Boolean: True if present, False if not
+        '''
         return self.is_present(timeout=timeout)
 
     def is_not_displayed(self, timeout=0):
+        ''' Checks if an element is not displayed.
+        :param timeout: Allowed Time for an element to disappear
+        :return: Boolean: True if not present. False if present
+        '''
         return self.is_not_present(timeout=timeout)
 
     def is_present(self, timeout=0):
+        '''Alias for is_displayed
+        :param timeout: Allowed Time for element to appear
+        :return: Boolean: True if present, False if not
+        '''
         start = time.time()
         while True:
             try:
@@ -188,6 +213,10 @@ class BaseElement(WebElement):
                     return False
 
     def is_not_present(self, timeout=None):
+        '''Alias for is_not_displayed
+        :param timeout: Allowed Time for element to appear
+        :return: Boolean: True if present, False if not
+        '''
         start = time.time()
         while True:
             try:
@@ -293,10 +322,20 @@ class BaseElement(WebElement):
         return self
 
     def sync_css_value(self, attribute, value, timeout=30):
+        '''Waits for element css attribute to match value
+        :param attribute:  CSS Attribute name to match
+        :param value:    Value to match
+        :param timeout:   Allowed Time
+        '''
         WebDriverWait(self.driver, timeout).until(EC2.wait_for_css_attribute_value(self))
         return self
 
     def sync_not_css_value(self, attribute, value, timeout=30):
+        '''Waits for element css attribute to not match value
+        :param attribute:  CSS Attribute name to match
+        :param value:    Value to match
+        :param timeout:   Allowed Time
+        '''
         WebDriverWait(self.driver, timeout).until(not EC2.wait_for_css_attribute_value(self))
         return self
 
