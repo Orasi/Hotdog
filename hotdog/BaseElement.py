@@ -290,14 +290,15 @@ class BaseElement(WebElement):
         ''' Waits for element to clickable
         :param timeout:   Allowed Time
         '''
-        WebDriverWait(self.driver, timeout).until(EC.element_to_be_clickable(self.search_by))
+
+        WebDriverWait(self.driver, timeout).until(EC.element_to_be_clickable((self.search_by[0], self.search_by[1])))
         return self
 
     def sync_disabled(self, timeout=30):
         ''' Waits for element to not be clickable
         :param timeout:   Allowed Time
         '''
-        WebDriverWait(self.driver, timeout).until(not EC.element_to_be_clickable(self.search_by))
+        WebDriverWait(self.driver, timeout).until(not EC.element_to_be_clickable((self.search_by[0], self.search_by[1])))
         return self
 
     def sync_attribute_value(self, attribute, value, timeout=30):
