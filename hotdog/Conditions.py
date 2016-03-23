@@ -1,5 +1,17 @@
 from selenium.common.exceptions import StaleElementReferenceException
 
+class wait_for_present(object):
+    def __init__(self, element):
+        self.element = element
+
+    def __call__(self, driver):
+        try:
+            self.element.load()
+            if self.element.element != None:
+                return self.element
+            return False
+        except:
+            return False
 
 class wait_for_text_to_start_with(object):
     def __init__(self, element, text, ignore_case=False):
@@ -62,12 +74,16 @@ class wait_for_attribute_value(object):
 
     def __call__(self, driver):
         try:
-            if self.element.getattr(self.attribute) == self.value:
+            if self.element.get_attribute(self.attribute) == self.value:
                 return True
             else:
                 return False
+        except StaleElementReferenceException:
+            self.element.reload()
+            return False
         except:
             return False
+
 
 class wait_for_css_attribute_value(object):
     def __init__(self, element, attribute, value):

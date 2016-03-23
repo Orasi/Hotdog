@@ -35,16 +35,28 @@ class HotDogBasePage(object):
 
     def find(self, objectName, type=None):
         locators = getattr(self, objectName)
+        self.driver.implicitly_wait(0)
         if len(locators) == 3 and not type:
             type = locators[2]
-        element = self.driver.find_element(locators[0], locators[1], type=type)
+        try:
+            element = self.driver.find_element(locators[0], locators[1], type=type, name=objectName)
+        except:
+            if type:
+                element = type(self.driver, None, by=locators[0], value=locators[1], name=objectName, type=type)
+            else:
+                element = self.driver.DefaultElementType(self.driver, None, by=locators[0], value=locators[1], name=objectName, type=type)
+            element._driver = self.driver
+            element._parent = self.driver
+        self.driver.implicitly_wait(self.driver.default_wait_time)
         return element
 
     def finds(self, objectName, type=None):
+        self.driver.implicitly_wait(0)
         locators = getattr(self, objectName)
         if len(locators) == 3 and not type:
             type = locators[2]
-        element = self.driver.find_elements(locators[0], locators[1], type=type)
+        element = self.driver.find_elements(locators[0], locators[1], type=type, name=objectName)
+        self.driver.implicitly_wait(self.driver.default_wait_time)
         return element
 
     def find_random(self, object_name, type=None):
@@ -60,10 +72,23 @@ class HotDogBasePage(object):
         return elements[index]
 
     def find_element(self, *args, **kwargs):
-        return self.driver.find_element(*args, **kwargs)
+        self.driver.implicitly_wait(0)
+        try:
+            element =  self.driver.find_element(*args, **kwargs)
+            element._parent = self.driver
+        except:
+            element =  self.driver.DefaultElementType(self.driver, None, by=kwargs['by'], value=kwargs['value'])
+            element._driver = self.driver
+            element._parent = self.driver
+        self.driver.implicitly_wait(self.driver.default_wait_time)
+        return element
 
     def find_elements(self, *args, **kwargs):
-        return self.driver.find_elements(*args, **kwargs)
+        elements =  self.driver.find_elements(*args, **kwargs)
+        elements._driver = self.driver
+        elements._parent = self.driver
+        return elements
+
 
     def back(self):
         self.driver.execute_script("window.history.go(-1)");
@@ -155,15 +180,3 @@ class HotDogBasePage(object):
 
     def uploadScreenshot(self, test, name=None):
         Mustard.UploadScreenshot(self, test, name);
-
-    def find_random(self, object_name, type=None):
-        '''Returns a random collection element.
-        :param object_name: the object name
-        :return: randomly selected element
-        '''
-        locators = getattr(self, object_name)
-        if len(locators) == 3 and not type:
-            type = locators[2]
-        elements = self.driver.find_elements(locators[0], locators[1], type=type)
-        index = randint(0, len(elements) - 1)
-        return elements[index]

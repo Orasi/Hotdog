@@ -189,3 +189,5 @@ class HotDogBaseTest(unittest.TestCase):
         self.timersTotal[name] = time() - self.timersStart[name]
         if self.options['mustard']:
             Mustard.UploadPerformance(Mustard.getDeviceID(self), name, self.timersTotal[name])
+
+

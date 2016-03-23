@@ -1,7 +1,7 @@
 import time
 from random import randint
 
-from selenium.common.exceptions import WebDriverException
+from selenium.common.exceptions import WebDriverException, StaleElementReferenceException, NoSuchElementException
 from selenium.webdriver import ActionChains
 from selenium.webdriver.common.by import By
 from selenium.webdriver.remote.webdriver import WebElement
@@ -9,97 +9,146 @@ from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.wait import WebDriverWait
 from waiting import wait as wait_lib
 
-from hotdog import Conditions as EC2
+from hotdog import Conditions as EC2, BaseElements
+from hotdog.BaseElements import BaseElements
+
+
+def element_action(action):
+
+    def wrapper(*args, **kwargs):
+        args[0].driver.implicitly_wait(0)
+        timeout = kwargs.pop('timeout', args[0].driver.default_wait_time)
+        start = time.time()
+        while True:
+            try:
+                if args[0].element == []:
+                    raise NoSuchElementException('Element [%s] could not be found' % args[0])
+                if args[0].element == None:
+                    raise NoSuchElementException('Element [%s] could not be found' % args[0])
+                result = action(*args, **kwargs)
+                args[0].driver.implicitly_wait(args[0].driver.default_wait_time)
+                return result
+            except StaleElementReferenceException:
+                if time.time() - start > timeout:
+                    raise
+                try:
+                    args[0].load()
+                except:
+                    pass
+
+            except:
+                if time.time() - start > timeout:
+                    raise
+                try:
+                    args[0].load()
+                except:
+                    pass
+
+    return wrapper
 
 
 class BaseElement(WebElement):
 
     debug = False
+    name = None
+    value = None
+    by = None
 
+
+######################## ELEMENT Properties #################################
     @property
     def driver(self):
-        return self._parent
-
-    def find(self, objectName, type=None):
-        locators = getattr(self, objectName)
-        if len(locators) == 3 and not type:
-            type = locators[2]
-        element = self.find_element(locators[0], locators[1])
-        if type:
-            element.__class__ = type
+        if hasattr(self, '_driver'):
+            return self._driver
         else:
-            element.__class__ = BaseElement
-        return element
+            return self.parent.driver
 
-    def finds(self, objectName, type=None):
-        locators = getattr(self, objectName)
-        if len(locators) == 3 and not type:
-            type = locators[2]
-        elements = self.find_elements(locators[0], locators[1], type=type)
-        return elements
+    @property
+    def tag_name(self):
+        return self.element.tag_name
 
-    def find_random(self, object_name, type=None):
-        '''Returns a random collection element.
-        :param object_name: the object name
-        :return: randomly selected element
-        '''
-        locators = getattr(self, object_name)
-        if len(locators) == 3 and not type:
-            type = locators[2]
-        elements = self.find_elements(locators[0], locators[1], type=type)
-        index = randint(0, len(elements) - 1)
-        return elements[index]
+    @property
+    def text(self):
+        return self.element.text
 
-    def find_element(self, by=By.ID, value=None, type=None):
-        element =  super().find_element(by, value)
-        if type:
-             klass = type
+    @property
+    def location_once_scrolled_into_view(self):
+        return self.element.location_once_scrolled_into_view
+
+    @property
+    def size(self):
+        return self.element.size
+
+    @property
+    def location(self):
+        return self.element.location
+
+    @property
+    def rect(self):
+        return self.element.rect
+
+    @property
+    def screenshot_as_base64(self):
+        return self.element.screenshot_as_base64
+
+    @property
+    def screenshot_as_png(self):
+        return self.element.screenshot_as_png
+
+    @property
+    def parent(self):
+        if hasattr(self, '_parent'):
+            return self._parent
         else:
-            klass = BaseElement
-        element.search_by = (by, value, type, self)
-        element.__class__ = klass
+            return self.element._parent
 
-        if hasattr(self, 'debug'):
-            element.debug = self.debug
-        return element
+    @property
+    def id(self):
+        return self.element.id
 
-    def find_elements(self, by=By.ID, value=None, type=None):
-        elements =  super().find_elements(by, value)
-        if type:
-             klass = type
-        else:
-            klass = BaseElement
+######################## ELEMENT ACTIONS #################################
+    @element_action
+    def value_of_css_property(self, property_name):
+        return self.element.value_of_css_property()
 
-        for element in elements:
-            element.__class__ = klass
-            element.search_by = (by, value, type, self)
-            if hasattr(self, 'debug'):
-                element.debug = self.debug
-        return elements
+    @element_action
+    def screenshot(self, filename):
+        return self.element.screenshot
 
-    def reload(self):
-        if len(self.search_by) == 4:
-            parent = self.search_by[3]
-            parent.reload()
-            element = parent.find_element(self.search_by[0], self.search_by[1], self.search_by[2])
-        else:
-            element = self.driver.find_element(self.search_by[0], self.search_by[1], self.search_by[2])
-        return element
+    @element_action
+    def get_attribute(self, name):
+        return self.element.get_attribute(name)
 
+    @element_action
+    def is_selected(self):
+        return self.element.is_selected()
+
+    @element_action
+    def is_enabled(self):
+        return self.element.is_enabled()
+
+    @element_action
+    def submit(self):
+        self.element.submit()
+
+    @element_action
     def javascript_async(self, script):
         script = script.replace("this", 'arguments[0]')
         self.driver.execute_async_script(script, self)
         return self
 
+    @element_action
     def javascript(self, script):
         script = script.replace("this", 'arguments[0]')
         self.driver.execute_script(script, self)
         return self
 
+    @element_action
     def highlight(self):
         self.javascript("this.style.border='3px solid yellow'")
         return self
 
+    @element_action
     def flash(self):
         self.javascript("this.style.border='3px solid yellow'")
         time.sleep(0.5)
@@ -114,39 +163,48 @@ class BaseElement(WebElement):
         self.javascript("this.style.border='0px'")
         return self
 
+    @element_action
     def set(self, text):
-        if self.debug:
-            self.flash()
-        super().send_keys(text)
+        self.clear()
+        self.send_keys(text)
         return self
 
+    @element_action
     def clear(self):
         if self.debug:
             self.flash()
-        super().clear()
+        self.element.clear()
         return self
 
-    def send_keys(self, *value):
-        return self.set(value)
+    @element_action
+    def send_keys(self, value):
+        if self.debug:
+            self.flash()
+        self.element.send_keys(value)
+        return self
 
+    @element_action
     def click(self):
         if self.debug:
             self.flash()
-        super().click()
+        self.element.click()
         return self
 
+    @element_action
     def jsClick(self):
         if self.debug:
             self.flash()
         self.javascript('this.click()')
         return self
 
+    @element_action
     def focus(self):
         if self.debug:
             self.flash()
         self.javascript('this.focus()')
         return self
 
+    @element_action
     def hover(self):
         '''
         Performs Action Chain Hover on element
@@ -155,14 +213,16 @@ class BaseElement(WebElement):
         #Todo: Add check for Safari driver and throw exception
         if self.debug:
             self.flash()
-        hov = ActionChains(self.driver).move_to_element(self)
+        hov = ActionChains(self.driver).move_to_element(self.element)
         hov.perform()
         return self
 
+    @element_action
     def scrollIntoView(self):
         self.javascript('this.scrollIntoView()')
         return self
 
+    @element_action
     def scrollIntoViewCenter(self):
         # scrollIntoView scrolls untill object at top of screen
         # the next javascript scrolls down half a page (1/2 the viewport height)
@@ -172,16 +232,17 @@ class BaseElement(WebElement):
         self.javascript('this.scrollIntoView()')
         self.javascript('window.scrollTo(0, (document.documentElement.scrollTop || document.body.scrollTop) - window.innerHeight / 2)')
 
-
+    @element_action
     def tap(self):
-        location = self.location
-        size = self.size
+        location = self.element.location
+        size = self.element.size
         x_loc = location['x'] + (size['width']/2)
         y_loc = location['y'] + (size['height']/2)
         loc = (x_loc, y_loc)
         self.driver.tap([loc])
         return self
 
+    @element_action
     def is_displayed(self, timeout=0):
         '''Overrides default implementation of is_displayed to allow an optional timeout
         :param timeout: Allowed Time for element to appear
@@ -189,6 +250,7 @@ class BaseElement(WebElement):
         '''
         return self.is_present(timeout=timeout)
 
+    @element_action
     def is_not_displayed(self, timeout=0):
         ''' Checks if an element is not displayed.
         :param timeout: Allowed Time for an element to disappear
@@ -196,6 +258,7 @@ class BaseElement(WebElement):
         '''
         return self.is_not_present(timeout=timeout)
 
+    @element_action
     def is_present(self, timeout=0):
         '''Alias for is_displayed
         :param timeout: Allowed Time for element to appear
@@ -204,7 +267,7 @@ class BaseElement(WebElement):
         start = time.time()
         while True:
             try:
-                if super().is_displayed():
+                if self.element.is_displayed():
                     return True
                 if time.time() - start > timeout:
                     return False
@@ -212,6 +275,7 @@ class BaseElement(WebElement):
                 if time.time() - start > timeout:
                     return False
 
+    @element_action
     def is_not_present(self, timeout=None):
         '''Alias for is_not_displayed
         :param timeout: Allowed Time for element to appear
@@ -220,7 +284,7 @@ class BaseElement(WebElement):
         start = time.time()
         while True:
             try:
-                if not super().is_displayed():
+                if not self.element.is_displayed():
                     return True
 
                 if time.time() - start > timeout:
@@ -229,6 +293,98 @@ class BaseElement(WebElement):
             except:
                 if time.time() - start > timeout:
                     return False
+
+######################## Finders #################################
+    def load(self):
+        if self.element == []:
+            time.sleep(1)
+            self.element =  self.parent.find_elements(self.by, self.value, type=self.type)
+        else:
+            _element =  self.parent.find_element(self.by, self.value, type=self.type)
+            try:
+                self.element = WebElement(_element.element._parent, _element.element._id, w3c=_element.element._w3c)
+            except:
+                self.element = None
+                raise
+
+    def find(self, objectName, type=None):
+        locators = getattr(self, objectName)
+        self.driver.implicitly_wait(0)
+        if len(locators) == 3 and not type:
+            type = locators[2]
+        element = self.find_element(locators[0], locators[1], type=type, name=objectName)
+        if type:
+            element.__class__ = type
+        self.driver.implicitly_wait(self.driver.default_wait_time)
+        return element
+
+    def finds(self, objectName, type=None):
+        locators = getattr(self, objectName)
+        self.driver.implicitly_wait(0)
+        if len(locators) == 3 and not type:
+            type = locators[2]
+        elements = self.find_elements(locators[0], locators[1], type=type, name=objectName)
+        self.driver.implicitly_wait(self.driver.default_wait_time)
+        return elements
+
+    def find_random(self, object_name, type=None):
+        '''Returns a random collection element.
+        :param object_name: the object name
+        :return: randomly selected element
+        '''
+        locators = getattr(self, object_name)
+        if len(locators) == 3 and not type:
+            type = locators[2]
+        elements = self.find_elements(locators[0], locators[1], type=type)
+        index = randint(0, len(elements) - 1)
+
+        return elements[index]
+
+    def find_element(self, by=By.ID, value=None, type=None, name=None):
+
+        try:
+            element =  self.element.find_element(by, value)
+        except:
+            if type:
+                element = type(self.driver, None, by=by, value=value, name=name, type=type)
+            else:
+                element = self.driver.DefaultElementType(self.driver, None, by=by, value=value, name=name, type=type)
+            element._parent = self.driver
+
+
+        element.search_by = (by, value, type, self)
+        element.by = by
+        element.value = value
+        element._driver = self.driver
+
+        if name:
+            element.name = name
+        if type:
+            element.__class__ = type
+
+        if hasattr(self, 'debug'):
+            element.debug = self.debug
+        return element
+
+    def find_elements(self, by=By.ID, value=None, type=None, name=None):
+
+        elements =  self.element.find_elements(by, value)
+
+        for element in elements:
+            if type:
+                element.__class__ = type
+            if hasattr(self, 'debug'):
+                element.debug = self.debug
+
+        if len(elements) > 0:
+            loaded = True
+        else:
+            loaded = False
+
+        #Wrap elements in BaseElements
+        return BaseElements(elements, self, by, value, loaded=loaded, type=type, name=name)
+
+
 
     def is_element_present(self, element_name, just_in_dom=False, timeout=0):
         def _get_driver():
@@ -259,6 +415,8 @@ class BaseElement(WebElement):
 
         return wait_lib(*args, **kwargs)
 
+
+######################## Sync  #################################
     def sync_text_starts_with(self, text, timeout=30, ignore_case=False):
         ''' Waits for text attribute of element to start with provided string
         :param text:   String for matching
@@ -286,11 +444,24 @@ class BaseElement(WebElement):
         WebDriverWait(self.driver, timeout).until(EC2.wait_for_text_to_contain(self, text, ignore_case=ignore_case))
         return self
 
+    def sync_present(self, timeout=30):
+        ''' Waits for element to clickable
+        :param timeout:   Allowed Time
+        '''
+        WebDriverWait(self.driver, timeout).until(EC2.wait_for_present(self))
+        return self
+
+    def sync_not_present(self, timeout=30):
+        ''' Waits for element to clickable
+        :param timeout:   Allowed Time
+        '''
+        WebDriverWait(self.driver, timeout).until_not(EC2.wait_for_present(self))
+        return self
+
     def sync_enabled(self, timeout=30):
         ''' Waits for element to clickable
         :param timeout:   Allowed Time
         '''
-
         WebDriverWait(self.driver, timeout).until(EC.element_to_be_clickable((self.search_by[0], self.search_by[1])))
         return self
 
@@ -298,7 +469,7 @@ class BaseElement(WebElement):
         ''' Waits for element to not be clickable
         :param timeout:   Allowed Time
         '''
-        WebDriverWait(self.driver, timeout).until(not EC.element_to_be_clickable((self.search_by[0], self.search_by[1])))
+        WebDriverWait(self.driver, timeout).until_not(EC.element_to_be_clickable((self.search_by[0], self.search_by[1])))
         return self
 
     def sync_attribute_value(self, attribute, value, timeout=30):
@@ -307,7 +478,7 @@ class BaseElement(WebElement):
         :param value:    Value to match
         :param timeout:   Allowed Time
         '''
-        WebDriverWait(self.driver, timeout).until(EC2.wait_for_attribute_value(self))
+        WebDriverWait(self.driver, timeout).until(EC2.wait_for_attribute_value(self, attribute, value))
         return self
 
     def sync_not_attribute_value(self, attribute, value, timeout=30):
@@ -316,7 +487,7 @@ class BaseElement(WebElement):
         :param value:    Value to match
         :param timeout:   Allowed Time
         '''
-        WebDriverWait(self.driver, timeout).until(not EC2.wait_for_attribute_value(self))
+        WebDriverWait(self.driver, timeout).until_not(EC2.wait_for_attribute_value(self, attribute, value))
         return self
 
     def sync_css_value(self, attribute, value, timeout=30):
@@ -336,5 +507,50 @@ class BaseElement(WebElement):
         '''
         WebDriverWait(self.driver, timeout).until(not EC2.wait_for_css_attribute_value(self))
         return self
+
+
+######################## Private Methods #################################
+    def __eq__(self, element):
+        return self.element.__eq__(element)
+
+    def __ne__(self, element):
+        return not self.__eq__(element)
+
+    def _execute(self, command, params=None):
+        return self.element._execute(command, params)
+
+    def __hash__(self):
+        return self.element.__hash__()
+
+    def _upload(self, filename):
+        return self.element._upload(filename)
+
+    def __init__(self,  parent, id_, w3c=False, loaded=True, by=None, value=None, name=None, type=None, finds=False):
+        self.name = name
+        self.by = by
+        self.value = value
+        self.type = type
+        self._parent = parent
+
+        parent.driver.implicitly_wait(0)
+        if id_:
+            self.element = WebElement(parent, id_, w3c)
+            self.loaded = True
+        else:
+            if finds:
+                self.element = []
+            else:
+                self.element = None
+            self.loaded = False
+        parent.driver.implicitly_wait(parent.driver.default_wait_time)
+
+    def __repr__(self):
+        if self.name and self.by and self.value:
+            return '<{0.__module__}.{0.__name__}.{1} By("{2}", "{3}")>'.format(type(self), self.name, self.by, self.value)
+        if self.by and self.value:
+            return '<{0.__module__}.{0.__name__} By({1}, {2}>'.format(type(self), self.by, self.value)
+        else:
+            return '<{0.__module__}.{0.__name__}>'.format(type(self))
+
 
     #Todo: Add Regex support for all conditions that use text
