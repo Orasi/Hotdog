@@ -45,6 +45,19 @@ class UploadResults(unittest.TestResult):
                                                                        'PASS',
                                                                        test.options['deviceName']))
 
+    def addSkip(self, test, reason):
+        UploadToMustard(test, 'skip')
+        try:
+            builtins.threadlocal.keepSession
+        except:
+            builtins.threadlocal.driver = None
+            self.RemoveApp(test)
+        super().addSuccess(test)
+        print("Testcase [%s] skipped on device [%s] because [%s]" % (test._testMethodName,
+                                                                       test.options['deviceName'],
+                                                                     reason))
+
+
     def get_error_message(self, error, stacktrace):
         try:
             errmsg=  str(error[1])

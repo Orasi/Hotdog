@@ -3,6 +3,7 @@ setup.cfg
 setup.py
 hotdog/BaseDriver.py
 hotdog/BaseElement.py
+hotdog/BaseElements.py
 hotdog/BasePage.py
 hotdog/BaseTest.py
 hotdog/Conditions.py
