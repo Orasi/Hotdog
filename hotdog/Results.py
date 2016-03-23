@@ -36,7 +36,8 @@ class UploadResults(unittest.TestResult):
     def addSuccess(self, test):
         UploadToMustard(test, 'pass')
         try:
-            builtins.threadlocal.keepSession
+            if not builtins.threadlocal.keepSession:
+                builtins.threadlocal.driver = None
         except:
             builtins.threadlocal.driver = None
             self.RemoveApp(test)
@@ -48,7 +49,8 @@ class UploadResults(unittest.TestResult):
     def addSkip(self, test, reason):
         UploadToMustard(test, 'skip')
         try:
-            builtins.threadlocal.keepSession
+            if not builtins.threadlocal.keepSession:
+                builtins.threadlocal.driver = None
         except:
             builtins.threadlocal.driver = None
             self.RemoveApp(test)
