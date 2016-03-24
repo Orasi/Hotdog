@@ -330,3 +330,9 @@ class GetElementTests(HotDogBaseTest):
         element = test.find_random('notPresent')
         with self.assertRaises(NoSuchElementException):
              element.click(timeout=1)
+
+    def test_getElementText(self):
+        self.driver.get('http://orasi.github.io/Selenium-Java-Core/sites/unitTests/orasi/core/interfaces/element.html')
+        test = TestPage(driver=self.driver)
+        element = test.find('notPresent')
+        assert element.text == '', '[%s]' % element.text
