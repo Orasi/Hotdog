@@ -41,6 +41,7 @@ class BaseElements(object):
 
     def load(self):
         self.elements =  self.parent.find_elements(self.by, self.value, type=self.type)
+        time.sleep(0.5)
 
     def __init__(self, elements,parent, by, value, type=None, name=None, loaded=True):
         self.parent = parent

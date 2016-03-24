@@ -63,34 +63,42 @@ class BaseElement(WebElement):
         else:
             return self.parent.driver
 
+    @element_action
     @property
     def tag_name(self):
         return self.element.tag_name
 
+    @element_action
     @property
     def text(self):
         return self.element.text
 
+    @element_action
     @property
     def location_once_scrolled_into_view(self):
         return self.element.location_once_scrolled_into_view
 
+    @element_action
     @property
     def size(self):
         return self.element.size
 
+    @element_action
     @property
     def location(self):
         return self.element.location
 
+    @element_action
     @property
     def rect(self):
         return self.element.rect
 
+    @element_action
     @property
     def screenshot_as_base64(self):
         return self.element.screenshot_as_base64
 
+    @element_action
     @property
     def screenshot_as_png(self):
         return self.element.screenshot_as_png
@@ -305,6 +313,7 @@ class BaseElement(WebElement):
                 self.element = WebElement(_element.element._parent, _element.element._id, w3c=_element.element._w3c)
             except:
                 self.element = None
+                time.sleep(1)
                 raise
 
     def find(self, objectName, type=None):
