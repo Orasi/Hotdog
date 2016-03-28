@@ -277,7 +277,7 @@ class BaseElement(WebElement):
                     time.sleep(1)
 
     @element_action
-    def is_not_present(self, timeout=None):
+    def is_not_present(self, timeout=0):
         '''Alias for is_not_displayed
         :param timeout: Allowed Time for element to appear
         :return: Boolean: True if present, False if not
