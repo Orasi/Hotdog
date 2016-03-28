@@ -215,6 +215,10 @@ class BaseElement(WebElement):
         Performs Action Chain Hover on element
         :Note: Does not work in Safari Driver
         '''
+
+        if not self.element:
+            raise Exception('Element is not loaded')
+
         #Todo: Add check for Safari driver and throw exception
         if self.debug:
             self.flash()
