@@ -16,7 +16,6 @@ from hotdog.BaseElements import BaseElements
 def element_action(action):
 
     def wrapper(*args, **kwargs):
-        args[0].driver.implicitly_wait(0)
         timeout = kwargs.pop('timeout', args[0].driver.default_wait_time)
         start = time.time()
         while True:
@@ -26,20 +25,20 @@ def element_action(action):
                 if args[0].element == None:
                     raise NoSuchElementException('Element [%s] could not be found' % args[0])
                 result = action(*args, **kwargs)
-                args[0].driver.implicitly_wait(args[0].driver.default_wait_time)
                 return result
             except StaleElementReferenceException:
                 if time.time() - start > timeout:
                     raise
                 try:
+                    time.sleep(1)
                     args[0].load()
                 except:
                     pass
-
             except:
                 if time.time() - start > timeout:
                     raise
                 try:
+                    time.sleep(1)
                     args[0].load()
                 except:
                     pass
@@ -117,7 +116,7 @@ class BaseElement(WebElement):
 ######################## ELEMENT ACTIONS #################################
     @element_action
     def value_of_css_property(self, property_name):
-        return self.element.value_of_css_property()
+        return self.element.value_of_css_property(property_name)
 
     @element_action
     def screenshot(self, filename):
@@ -151,12 +150,10 @@ class BaseElement(WebElement):
         self.driver.execute_script(script, self)
         return self
 
-    @element_action
     def highlight(self):
         self.javascript("this.style.border='3px solid yellow'")
         return self
 
-    @element_action
     def flash(self):
         self.javascript("this.style.border='3px solid yellow'")
         time.sleep(0.5)
@@ -171,7 +168,6 @@ class BaseElement(WebElement):
         self.javascript("this.style.border='0px'")
         return self
 
-    @element_action
     def set(self, text):
         self.clear()
         self.send_keys(text)
@@ -198,14 +194,12 @@ class BaseElement(WebElement):
         self.element.click()
         return self
 
-    @element_action
     def jsClick(self):
         if self.debug:
             self.flash()
         self.javascript('this.click()')
         return self
 
-    @element_action
     def focus(self):
         if self.debug:
             self.flash()
@@ -225,12 +219,10 @@ class BaseElement(WebElement):
         hov.perform()
         return self
 
-    @element_action
     def scrollIntoView(self):
         self.javascript('this.scrollIntoView()')
         return self
 
-    @element_action
     def scrollIntoViewCenter(self):
         # scrollIntoView scrolls untill object at top of screen
         # the next javascript scrolls down half a page (1/2 the viewport height)
@@ -250,7 +242,6 @@ class BaseElement(WebElement):
         self.driver.tap([loc])
         return self
 
-    @element_action
     def is_displayed(self, timeout=0):
         '''Overrides default implementation of is_displayed to allow an optional timeout
         :param timeout: Allowed Time for element to appear
@@ -258,7 +249,6 @@ class BaseElement(WebElement):
         '''
         return self.is_present(timeout=timeout)
 
-    @element_action
     def is_not_displayed(self, timeout=0):
         ''' Checks if an element is not displayed.
         :param timeout: Allowed Time for an element to disappear
@@ -278,10 +268,13 @@ class BaseElement(WebElement):
                 if self.element.is_displayed():
                     return True
                 if time.time() - start > timeout:
+                    time.sleep(1)
                     return False
             except:
                 if time.time() - start > timeout:
                     return False
+                else:
+                    time.sleep(1)
 
     @element_action
     def is_not_present(self, timeout=None):
@@ -296,16 +289,19 @@ class BaseElement(WebElement):
                     return True
 
                 if time.time() - start > timeout:
+                    time.sleep(1)
                     return False
 
             except:
                 if time.time() - start > timeout:
                     return False
+                else:
+                    time.sleep(1)
+
 
 ######################## Finders #################################
     def load(self):
         if self.element == []:
-            time.sleep(1)
             self.element =  self.parent.find_elements(self.by, self.value, type=self.type)
         else:
             _element =  self.parent.find_element(self.by, self.value, type=self.type)
@@ -313,7 +309,6 @@ class BaseElement(WebElement):
                 self.element = WebElement(_element.element._parent, _element.element._id, w3c=_element.element._w3c)
             except:
                 self.element = None
-                time.sleep(1)
                 raise
 
     def find(self, objectName, type=None):
