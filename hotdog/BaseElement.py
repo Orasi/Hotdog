@@ -25,7 +25,10 @@ def element_action(action):
                 if args[0].element == None:
                     raise NoSuchElementException('Element [%s] could not be found' % args[0])
                 result = action(*args, **kwargs)
-                return result
+                if result:
+                    return result
+                elif time.time() - start > timeout:
+                    return result
             except StaleElementReferenceException:
                 if time.time() - start > timeout:
                     raise
