@@ -12,16 +12,14 @@ def elements_action(action):
             try:
                 result = action(*args, **kwargs)
                 #Do not return if result == not_value
-                if not_value:
-                    if result == not_value:
-                        if time.time() - start > timeout:
-                            return result
+                if not_value and result == not_value:
+                    if time.time() - start > timeout:
+                        return result
 
-                        try:
-                            args[0].load()
-                        except:
-                            pass
-
+                    try:
+                        args[0].load()
+                    except:
+                        pass
                 #Do not return if result == 0 and not_value not defined
                 elif result == 0:
                     if time.time() - start > timeout:
