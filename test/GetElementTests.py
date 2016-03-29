@@ -1,5 +1,6 @@
 import os
 
+import time
 from selenium.common.exceptions import NoSuchElementException
 from selenium.webdriver.common import by
 
@@ -345,8 +346,9 @@ class GetElementTests(HotDogBaseTest):
     def test_getElementsCountNotValue(self):
         self.driver.get('https://the-internet.herokuapp.com/checkboxes')
         elements =  self.driver.find_elements(by=By.TAG_NAME, value='input')
-        with self.assertRaises(Exception):
-            elements.count(timeout=2, not_value=2)
+        start_time=  time.time()
+        assert elements.count(timeout=5, not_value=2) == 2
+        assert time.time() - start_time >= 5
 
     def test_getElementsCountNotPresent(self):
         self.driver.get('http://orasi.github.io/Selenium-Java-Core/sites/unitTests/orasi/core/interfaces/element.html')

@@ -6,11 +6,32 @@ def elements_action(action):
     def wrapper(*args, **kwargs):
         args[0].parent.driver.implicitly_wait(0)
         timeout = kwargs.pop('timeout', args[0].parent.driver.default_wait_time)
+        not_value = kwargs.pop('not_value', None)
         start = time.time()
         while True:
             try:
                 result = action(*args, **kwargs)
-                return result
+                #Do not return if result == not_value
+                if not_value:
+                    if result == not_value:
+                        if time.time() - start > timeout:
+                            return result
+
+                        try:
+                            args[0].load()
+                        except:
+                            pass
+
+                #Do not return if result == 0 and not_value not defined
+                elif result == 0:
+                    if time.time() - start > timeout:
+                        return result
+                    try:
+                        args[0].load()
+                    except:
+                        pass
+                else:
+                    return result
             except:
                 if time.time() - start > timeout:
                     raise
@@ -40,15 +61,9 @@ class BaseElements(object):
         return len(self.elements)
 
     @elements_action
-    def count(self, not_value=0, raise_exception=True):
+    def count(self):
         count = len(self)
-        if count == not_value:
-            if raise_exception:
-                raise Exception('Element count equal to [%s]' % not_value)
-            else:
-                return count
-        else:
-            return count
+        return count
 
     def load(self):
         self.elements =  self.parent.find_elements(self.by, self.value, type=self.type)
