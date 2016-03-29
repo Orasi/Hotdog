@@ -40,10 +40,13 @@ class BaseElements(object):
         return len(self.elements)
 
     @elements_action
-    def count(self, not_value=0):
+    def count(self, not_value=0, raise_exception=True):
         count = len(self)
         if count == not_value:
-            raise Exception('Element count equal to [%s]' % not_value)
+            if raise_exception:
+                raise Exception('Element count equal to [%s]' % not_value)
+            else:
+                return count
         else:
             return count
 
