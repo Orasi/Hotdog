@@ -35,9 +35,17 @@ class BaseElements(object):
     def __getitem__(self, item):
         return self.elements.__getitem__(item)
 
-    @elements_action
+
     def __len__(self):
         return len(self.elements)
+
+    @elements_action
+    def count(self, not_value=0):
+        count = len(self)
+        if count == not_value:
+            raise Exception('Element count equal to [%s]' % not_value)
+        else:
+            return count
 
     def load(self):
         self.elements =  self.parent.find_elements(self.by, self.value, type=self.type)

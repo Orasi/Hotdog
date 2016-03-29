@@ -336,3 +336,21 @@ class GetElementTests(HotDogBaseTest):
         test = TestPage(driver=self.driver)
         element = test.find('notPresent')
         assert element.text == '', '[%s]' % element.text
+
+    def test_getElementsCount(self):
+        self.driver.get('https://the-internet.herokuapp.com/checkboxes')
+        elements =  self.driver.find_elements(by=By.TAG_NAME, value='input')
+        assert elements.count(timeout=5) == 2
+
+    def test_getElementsCountNotValue(self):
+        self.driver.get('https://the-internet.herokuapp.com/checkboxes')
+        elements =  self.driver.find_elements(by=By.TAG_NAME, value='input')
+        with self.assertRaises(Exception):
+            elements.count(timeout=2, not_value=2)
+
+    def test_getElementsCountNotPresent(self):
+        self.driver.get('http://orasi.github.io/Selenium-Java-Core/sites/unitTests/orasi/core/interfaces/element.html')
+        test = TestPage(driver=self.driver)
+        elements = test.finds('notPresent')
+        assert elements.count(timeout=10) == 1
+
