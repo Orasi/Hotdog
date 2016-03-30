@@ -1,6 +1,5 @@
 from selenium.webdriver.common.by import By
 from selenium.webdriver.remote.webdriver import WebDriver
-
 from hotdog.BaseElements import BaseElements
 from hotdog.BaseElement import BaseElement
 
@@ -17,6 +16,9 @@ class BaseWebDriver(WebDriver):
     @property
     def driver(self):
         return self
+
+    def implicitly_wait(self, time_to_wait):
+        pass
 
     def find_element(self, by=By.ID, value=None, type=None, name=None):
         self.implicitly_wait(0)
@@ -60,8 +62,6 @@ class BaseWebDriver(WebDriver):
 
         #Wrap Element Collection with BaseElements
         return BaseElements(elements, self, by, value, type=type, name=name, loaded=loaded)
-
-
 
     def create_web_element(self, element_id):
         return self.DefaultElementType(self, element_id, w3c=self.w3c)
