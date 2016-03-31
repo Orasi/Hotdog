@@ -107,18 +107,6 @@ class BaseElement(WebElement):
         return self.element.screenshot_as_png
 
     @property
-    @element_action
-    def hex_color(self):
-        rgb = self.element.value_of_css_property('color')
-        return Color.from_string(rgb).hex
-
-    @property
-    @element_action
-    def hex_background_color(self):
-        rgb = self.element.value_of_css_property('background-color')
-        return Color.from_string(rgb).hex
-
-    @property
     def parent(self):
         if hasattr(self, '_parent'):
             return self._parent
@@ -165,6 +153,18 @@ class BaseElement(WebElement):
         script = script.replace("this", 'arguments[0]')
         self.driver.execute_script(script, self)
         return self
+
+    def hex_color_from_css(self, property):
+        rgb = self.element.value_of_css_property(property)
+        return Color.from_string(rgb).hex
+
+    def rgb_color_from_css(self, property):
+        rgb = self.element.value_of_css_property(property)
+        return Color.from_string(rgb).rgb
+
+    def rgba_color_from_css(self, property):
+        rgb = self.element.value_of_css_property(property)
+        return Color.from_string(rgb).rgba
 
     def highlight(self):
         self.javascript("this.style.border='3px solid yellow'")
