@@ -73,6 +73,8 @@ class HotDogBaseTest(unittest.TestCase):
                     url = GetConfig('GRID_URL') + '/wd/hub'
                 elif 'sauce' in provider:
                     url = "http://%s:%s@ondemand.saucelabs.com:80/wd/hub" % (GetConfig('SAUCE_USERNAME'), GetConfig('SAUCE_ACCESS'))
+                    if desired_caps['browserName'] == 'internet explorer':
+                        desired_caps['requireWindowFocus'] = True
                 elif provider.lower() == 'local-chrome':
                     runLocal = True
                     builtins.threadlocal.driver = seleniumWebdriver.Chrome()
@@ -109,6 +111,8 @@ class HotDogBaseTest(unittest.TestCase):
                     url = self.GRID_URL
                 elif 'sauce' in self.provider:
                     url = self.SAUCE_URL
+                    if self.desired_caps['browserName'] == 'internet explorer':
+                        self.desired_caps['requireWindowFocus'] = True
                 elif self.provider.lower() == 'local-chrome':
                     runLocal = True
                     self.driver = seleniumWebdriver.Chrome()
@@ -117,7 +121,9 @@ class HotDogBaseTest(unittest.TestCase):
                     self.driver = seleniumWebdriver.Firefox()
                 elif self.provider.lower() == 'local-ie':
                     runLocal = True
-                    self.driver = seleniumWebdriver.Ie()
+                    caps = webdriver.DesiredCapabilities.INTERNETEXPLORER
+                    caps['NATIVE_EVENTS'] = False
+                    self.driver = seleniumWebdriver.Ie(caps)
                 else:
                     url = self.GRID_URL
 
