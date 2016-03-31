@@ -2,6 +2,7 @@ import time
 from random import randint
 
 from selenium.common.exceptions import WebDriverException, StaleElementReferenceException, NoSuchElementException
+from selenium.webdriver.support.color import Color
 from selenium.webdriver import ActionChains
 from selenium.webdriver.common.by import By
 from selenium.webdriver.remote.webdriver import WebElement
@@ -104,6 +105,18 @@ class BaseElement(WebElement):
     @element_action
     def screenshot_as_png(self):
         return self.element.screenshot_as_png
+
+    @property
+    @element_action
+    def hex_color(self):
+        rgb = self.element.value_of_css_property('color')
+        return Color.from_string(rgb).hex
+
+    @property
+    @element_action
+    def hex_background_color(self):
+        rgb = self.element.value_of_css_property('background-color')
+        return Color.from_string(rgb).hex
 
     @property
     def parent(self):
