@@ -14,8 +14,9 @@ import webium.settings
 from hotdog.BaseDriver import BaseWebDriver
 webium.settings.implicit_timeout = 5
 
-
 class HotDogBaseTest(unittest.TestCase):
+
+    DefaultWebDriver = BaseWebDriver
 
     #Boilerplate Settings Do not Change
     #Change in Config.xml
@@ -137,14 +138,14 @@ class HotDogBaseTest(unittest.TestCase):
                 print("Testcase [%s] COULD NOT START on device [%s]" % (self._testMethodName, self.options['deviceName']))
                 print(sys.exc_info()[1])
                 raise unittest.SkipTest('Could not launch driver')
-            self.driver.__class__ = BaseWebDriver
+            self.driver.__class__ = self.DefaultWebDriver
             builtins.threadlocal.driver = self.driver
             self.options['deviceName'] = self.environmentName()
             print("Testcase [%s] started on device [%s]" % (self._testMethodName, self.options['deviceName']))
             sleep(1)
         else:
             self.driver = builtins.threadlocal.driver
-            self.driver.__class__ = BaseWebDriver
+            self.driver.__class__ = self.DefaultWebDriver
             self.options['deviceName'] = self.environmentName()
             print("Testcase [%s] started on device [%s]" % (self._testMethodName, self.options['deviceName']))
             self.continueWithDriver = True
