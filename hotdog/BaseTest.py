@@ -41,7 +41,7 @@ class HotDogBaseTest(unittest.TestCase):
 
     timersStart = {}
     timersTotal = {}
-
+    testcase_id = ''
 
     @classmethod
     def setUpClass(cls, platform='mobile'):
