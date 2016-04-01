@@ -324,6 +324,7 @@ class BaseElement(WebElement):
         if self.element == []:
             self.element =  self.parent.find_elements(self.by, self.value, type=self.type)
         else:
+            self.parent.load()
             _element =  self.parent.find_element(self.by, self.value, type=self.type)
             try:
                 self.element = WebElement(_element.element._parent, _element.element._id, w3c=_element.element._w3c)
@@ -373,7 +374,7 @@ class BaseElement(WebElement):
                 element = type(self.driver, None, by=by, value=value, name=name, type=type)
             else:
                 element = self.driver.DefaultElementType(self.driver, None, by=by, value=value, name=name, type=type)
-            element._parent = self.driver
+            element._parent = self
 
 
         element.search_by = (by, value, type, self)
