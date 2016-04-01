@@ -324,7 +324,8 @@ class BaseElement(WebElement):
         if self.element == []:
             self.element =  self.parent.find_elements(self.by, self.value, type=self.type)
         else:
-            self.parent.load()
+            if not self.parent == self.driver:
+                self.parent.load()
             _element =  self.parent.find_element(self.by, self.value, type=self.type)
             try:
                 self.element = WebElement(_element.element._parent, _element.element._id, w3c=_element.element._w3c)
