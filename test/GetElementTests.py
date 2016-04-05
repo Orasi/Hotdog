@@ -328,8 +328,8 @@ class GetElementTests(HotDogBaseTest):
     def test_randomElementActionNotPresent(self):
         self.driver.get('https://the-internet.herokuapp.com/checkboxes')
         test = TestPage(driver=self.driver)
-        element = test.find_random('notPresent')
         with self.assertRaises(NoSuchElementException):
+             element = test.find_random('notPresent', timeout=2)
              element.click(timeout=1)
 
     def test_getElementText(self):

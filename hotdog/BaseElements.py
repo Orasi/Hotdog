@@ -1,4 +1,6 @@
 import time
+from random import randint
+
 from selenium.common.exceptions import NoSuchElementException, StaleElementReferenceException
 
 
@@ -53,7 +55,9 @@ class BaseElements(object):
 
     @elements_action
     def __getitem__(self, item):
-        return self.elements.__getitem__(item)
+        element = self.elements.__getitem__(item)
+        element.index = item
+        return element
 
 
     def __len__(self):
@@ -63,6 +67,11 @@ class BaseElements(object):
     def count(self):
         count = len(self)
         return count
+
+    @elements_action
+    def random(self):
+        index = randint(0, len(self.elements) - 1)
+        return self.elements[index]
 
     def load(self):
         self.elements =  self.parent.find_elements(self.by, self.value, type=self.type)

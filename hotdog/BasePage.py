@@ -1,6 +1,5 @@
 import time
-from selenium.common.exceptions import WebDriverException
-
+from selenium.common.exceptions import WebDriverException, NoSuchElementException
 from random import randint
 from hotdog import Mustard
 from hotdog.BaseDriver import get_driver
@@ -59,7 +58,7 @@ class HotDogBasePage(object):
         self.driver.implicitly_wait(self.driver.default_wait_time)
         return element
 
-    def find_random(self, object_name, type=None):
+    def find_random(self, object_name, type=None, timeout=20):
         '''Returns a random collection element.
         :param object_name: the object name
         :return: randomly selected element
@@ -68,6 +67,9 @@ class HotDogBasePage(object):
         if len(locators) == 3 and not type:
             type = locators[2]
         elements = self.driver.find_elements(locators[0], locators[1], type=type)
+        element_count = elements.count(timeout=timeout)
+        if element_count == 0:
+            raise NoSuchElementException('Element Not Found [%s]' % elements)
         index = randint(0, len(elements) - 1)
         return elements[index]
 

@@ -56,6 +56,7 @@ class BaseElement(WebElement):
     name = None
     value = None
     by = None
+    index = None
 
 
 ######################## ELEMENT Properties #################################
@@ -325,8 +326,12 @@ class BaseElement(WebElement):
             self.element =  self.parent.find_elements(self.by, self.value, type=self.type)
         else:
             if not self.parent == self.driver:
-                self.parent.load()
-            _element =  self.parent.find_element(self.by, self.value, type=self.type)
+                try: self.parent.load()
+                except: pass
+            if self.index:
+                _element = self.parent.find_elements(self.by, self.value, type=self.type)[self.index]
+            else:
+                _element =  self.parent.find_element(self.by, self.value, type=self.type)
             try:
                 self.element = WebElement(_element.element._parent, _element.element._id, w3c=_element.element._w3c)
             except:
