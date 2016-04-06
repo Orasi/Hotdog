@@ -322,21 +322,18 @@ class BaseElement(WebElement):
 
 ######################## Finders #################################
     def load(self):
-        if self.element == []:
-            self.element =  self.parent.find_elements(self.by, self.value, type=self.type)
+        if not self.parent == self.driver:
+            try: self.parent.load()
+            except: pass
+        if self.index:
+            _element = self.parent.find_elements(self.by, self.value, type=self.type)[self.index]
         else:
-            if not self.parent == self.driver:
-                try: self.parent.load()
-                except: pass
-            if self.index:
-                _element = self.parent.find_elements(self.by, self.value, type=self.type)[self.index]
-            else:
-                _element =  self.parent.find_element(self.by, self.value, type=self.type)
-            try:
-                self.element = WebElement(_element.element._parent, _element.element._id, w3c=_element.element._w3c)
-            except:
-                self.element = None
-                raise
+            _element =  self.parent.find_element(self.by, self.value, type=self.type)
+        try:
+            self.element = WebElement(_element.element._parent, _element.element._id, w3c=_element.element._w3c)
+        except:
+            self.element = None
+            raise
 
     def find(self, objectName, type=None):
         locators = getattr(self, objectName)
@@ -400,7 +397,6 @@ class BaseElement(WebElement):
     def find_elements(self, by=By.ID, value=None, type=None, name=None):
 
         elements =  self.element.find_elements(by, value)
-
         for element in elements:
             if type:
                 element.__class__ = type

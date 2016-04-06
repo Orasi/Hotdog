@@ -33,7 +33,7 @@ def elements_action(action):
                 else:
                     return result
             except:
-                time.sleep(0.5)
+                time.sleep(1)
                 if time.time() - start > timeout:
                     raise
                 try:
@@ -74,12 +74,14 @@ class BaseElements(object):
         return self.elements[index]
 
     def load(self):
+        if not self.parent == self.driver:
+            try: self.parent.load()
+            except: pass
         self.elements =  self.parent.find_elements(self.by, self.value, type=self.type)
-
 
     def __init__(self, elements,parent, by, value, type=None, name=None, loaded=True):
         self.parent = parent
-
+        self.driver = parent.driver
         self.elements = elements
         self.by = by
         self.value = value
