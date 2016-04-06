@@ -12,12 +12,12 @@ def find_packages(path='.', prefix=""):
 setup(
   name = 'hotdog',
   packages = list(find_packages(hotdog.__path__, hotdog.__name__)),
-  version = '1.5.23',
+  version = '1.5.24',
   description = 'Appium/Selenium testing framework deriving from unittest',
   author = 'Matt Watson',
   author_email = 'Watson.Mattc@gmail.com',
   url = 'https://github.com/Mattwhooo/Hotdog',
-  download_url = 'https://github.com/Mattwhooo/Hotdog/tarball/1.5.23',
+  download_url = 'https://github.com/Mattwhooo/Hotdog/tarball/1.5.24',
   keywords = ['appium', 'selenium', 'testing'],
   classifiers=[],
   install_requires=['webium', 'testtools','beautifulsoup4','Appium-Python-Client', 'requests', 'sauceclient', 'timeout-decorator', 'appium_selector', 'waiting']

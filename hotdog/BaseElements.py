@@ -77,7 +77,7 @@ class BaseElements(object):
         if not self.parent == self.driver:
             try: self.parent.load()
             except: pass
-        self.elements =  self.parent.find_elements(self.by, self.value, type=self.type)
+        self.elements =  self.parent.find_elements(self.by, self.value, type=self.type).elements
 
     def __init__(self, elements,parent, by, value, type=None, name=None, loaded=True):
         self.parent = parent
