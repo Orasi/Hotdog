@@ -277,7 +277,7 @@ class BaseElement(WebElement):
         '''
         return self.is_not_present(timeout=timeout)
 
-    @element_action
+
     def is_present(self, timeout=0):
         '''Alias for is_displayed
         :param timeout: Allowed Time for element to appear
@@ -297,10 +297,9 @@ class BaseElement(WebElement):
                 else:
                     time.sleep(1)
 
-    @element_action
     def is_not_present(self, timeout=0):
         '''Alias for is_not_displayed
-        :param timeout: Allowed Time for element to appear
+        :param timeout: Allowed Time for element to disappear
         :return: Boolean: True if present, False if not
         '''
         start = time.time()
@@ -314,10 +313,7 @@ class BaseElement(WebElement):
                     return False
 
             except:
-                if time.time() - start > timeout:
-                    return False
-                else:
-                    time.sleep(1)
+                return True
 
 
 ######################## Finders #################################

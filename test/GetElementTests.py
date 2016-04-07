@@ -30,6 +30,7 @@ class TestPage(HotDogBasePage):
     notPresent = (By.ID, 'appear')
     notPresentTyped = (By.ID, 'appear', TestElement)
     containerLoc = (By.ID, 'checkboxes', TestContainer)
+    disappear = (By.ID, 'disappear')
 
     @property
     def container(self):
@@ -154,7 +155,6 @@ class GetElementTests(HotDogBaseTest):
               assert element.element.__class__.__name__ == 'WebElement'
         assert len(elements) > 0
 
-
     def test_getsTypedElementThroughPageContainerThroughFind(self):
         self.driver.implicitly_wait(15)
         self.driver.get('https://the-internet.herokuapp.com/checkboxes')
@@ -249,7 +249,6 @@ class GetElementTests(HotDogBaseTest):
         element = test.finds('testElement')
         for e in element:
             e.click()
-
 
     def test_elementsActionSync(self):
         self.driver.get('http://orasi.github.io/Selenium-Java-Core/sites/unitTests/orasi/core/interfaces/element.html')
@@ -356,3 +355,35 @@ class GetElementTests(HotDogBaseTest):
         elements = test.finds('notPresent')
         assert elements.count(timeout=10) == 1
 
+    def test_elementIsDisplayedFalse(self):
+        self.driver.get('https://the-internet.herokuapp.com/checkboxes')
+        test = TestPage(driver=self.driver)
+        element = test.find('notPresent')
+        start_time = time.time()
+        displayed = element.is_displayed(timeout=10)
+        assert time.time() - start_time > 10
+        assert not displayed
+
+    def test_elementIsNotDisplayed(self):
+        self.driver.get('https://the-internet.herokuapp.com/checkboxes')
+        test = TestPage(driver=self.driver)
+        element = test.find('notPresent')
+        assert element.is_not_displayed(timeout=10)
+
+    def test_elementIsNotDisplayedDisapear(self):
+        self.driver.get('http://orasi.github.io/Selenium-Java-Core/sites/unitTests/orasi/core/interfaces/element.html')
+        test = TestPage(driver=self.driver)
+        element = test.find('disappear')
+        start_time = time.time()
+        not_displayed =  element.is_not_displayed(timeout=10)
+        assert time.time() - start_time > 2, time.time() - start_time
+        assert not_displayed
+
+    def test_elementIsNotDisplayedTimeout(self):
+        self.driver.get('https://the-internet.herokuapp.com/checkboxes')
+        test = TestPage(driver=self.driver)
+        element = test.find('testElement')
+        start_time = time.time()
+        not_displayed = element.is_not_displayed(timeout=10)
+        assert time.time() - start_time > 10
+        assert not not_displayed
