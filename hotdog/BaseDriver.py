@@ -1,5 +1,5 @@
 from selenium.webdriver.common.by import By
-from selenium.webdriver.remote.webdriver import WebDriver
+from appium.webdriver.webdriver import WebDriver
 from hotdog.BaseElements import BaseElements
 from hotdog.BaseElement import BaseElement
 
