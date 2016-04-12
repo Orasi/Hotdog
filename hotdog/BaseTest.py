@@ -85,9 +85,9 @@ class HotDogBaseTest(unittest.TestCase):
                 elif provider.lower() == 'local-ie':
                     runLocal = True
                     builtins.threadlocal.driver = seleniumWebdriver.Ie()
-                elif provider.lower() == 'mcWeb':
+                elif provider.lower() == 'mcweb':
                     url = GetConfig('MC_URL') + '/wd/hub'
-                elif provider.lower() == 'mcMobile':
+                elif provider.lower() == 'mcmobile':
                     url = GetConfig('MC_URL') + '/wd/hub'
                 else:
                     url = GetConfig('GRID_URL') + '/wd/hub'
