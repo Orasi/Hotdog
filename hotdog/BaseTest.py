@@ -126,9 +126,11 @@ class HotDogBaseTest(unittest.TestCase):
                     self.driver = seleniumWebdriver.Firefox()
                 elif self.provider.lower() == 'local-ie':
                     runLocal = True
-                    caps = webdriver.DesiredCapabilities.INTERNETEXPLORER
-                    caps['NATIVE_EVENTS'] = False
-                    self.driver = seleniumWebdriver.Ie(caps)
+                    self.driver = seleniumWebdriver.Ie()
+                elif self.provider.lower() == 'mcweb':
+                    url = GetConfig('MC_URL') + '/wd/hub'
+                elif self.provider.lower() == 'mcmobile':
+                    url = GetConfig('MC_URL') + '/wd/hub'
                 else:
                     url = self.GRID_URL
 
