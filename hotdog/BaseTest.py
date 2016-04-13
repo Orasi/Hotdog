@@ -82,6 +82,9 @@ class HotDogBaseTest(unittest.TestCase):
                 elif provider.lower() == 'local-firefox':
                     runLocal = True
                     builtins.threadlocal.driver = seleniumWebdriver.Firefox()
+                elif provider.lower() == 'local-safari':
+                    runLocal = True
+                    builtins.threadlocal.driver = seleniumWebdriver.Safari()
                 elif provider.lower() == 'local-ie':
                     runLocal = True
                     builtins.threadlocal.driver = seleniumWebdriver.Ie()
@@ -124,6 +127,9 @@ class HotDogBaseTest(unittest.TestCase):
                 elif self.provider.lower() == 'local-firefox':
                     runLocal = True
                     self.driver = seleniumWebdriver.Firefox()
+                elif self.provider.lower() == 'local-safari':
+                    runLocal = True
+                    self.driver = seleniumWebdriver.Safari()
                 elif self.provider.lower() == 'local-ie':
                     runLocal = True
                     self.driver = seleniumWebdriver.Ie()
