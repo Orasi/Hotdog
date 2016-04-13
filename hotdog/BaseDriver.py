@@ -7,7 +7,7 @@ from hotdog.BaseElement import BaseElement
 class BaseWebDriver(WebDriver):
 
     DefaultElementType = BaseElement
-    default_wait_time = 30
+    default_wait_time = 5
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
