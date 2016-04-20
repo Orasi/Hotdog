@@ -68,6 +68,11 @@ class HotDogBaseTest(unittest.TestCase):
                 builtins.threadlocal.config = DeviceSelector(platform=platform).getDevice()[0]
 
             provider = builtins.threadlocal.config['options']['provider']
+
+            if builtins.threadlocal.config['desiredCaps']['platformName'].upper() == 'ANDROID':
+                builtins.threadlocal.config['desiredCaps']['app'] = GetConfig('ANDROID_APP_URL')
+            else:
+                builtins.threadlocal.config['desiredCaps']['app'] = GetConfig('IOS_APP_URL')
             desired_caps = builtins.threadlocal.config['desiredCaps']
             try:
                 if 'grid' in provider:
