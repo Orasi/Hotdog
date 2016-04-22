@@ -152,7 +152,8 @@ class BaseElement(WebElement):
     @element_action
     def javascript(self, script):
         script = script.replace("this", 'arguments[0]')
-        return self.driver.execute_script(script, self)
+        value = self.driver.execute_script(script, self)
+        return self if value != None else value
 
     def hex_color_from_css(self, property):
         rgb = self.element.value_of_css_property(property)
