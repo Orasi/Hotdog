@@ -204,7 +204,7 @@ class HotDogBaseTest(unittest.TestCase):
         except: pass
 
     def run(self, result=None):
-        super().run( result=UploadResults())
+        super().run( result=defaultTestResult())
 
     def timerStart(self, name):
         self.timersStart[name] = time()
