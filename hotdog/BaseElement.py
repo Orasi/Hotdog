@@ -244,6 +244,10 @@ class BaseElement(WebElement):
         self.javascript('this.scrollIntoView()')
         return self
 
+    def scroll_element_to_center(self):
+        self.driver.execute_script("$('html,body').animate({scrollTop: $(arguments[0]).offset().top - $(window).height() / 2 + $(arguments[0]).height() / 2},'fast');", self)
+        return self
+
     def scrollIntoViewCenter(self):
         # scrollIntoView scrolls untill object at top of screen
         # the next javascript scrolls down half a page (1/2 the viewport height)
