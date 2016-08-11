@@ -110,7 +110,10 @@ def Upload(payload, files=None):
         print('Failed to upload results to mustard.  Saved to MustardFailSafe.txt')
 
 def getDeviceID(test):
-    if 'udid' in test.driver.desired_capabilities:
-        return test.driver.desired_capabilities['udid']
-    else:
-        return test.options['deviceName']
+    try:
+        if test.driver and 'udid' in test.driver.desired_capabilities:
+            return test.driver.desired_capabilities['udid']
+        else:
+            return test.options['deviceName']
+    except:
+        return 'ERROR'
