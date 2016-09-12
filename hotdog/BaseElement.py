@@ -5,7 +5,7 @@ from selenium.common.exceptions import WebDriverException, StaleElementReference
 from selenium.webdriver.support.color import Color
 from selenium.webdriver import ActionChains
 from selenium.webdriver.common.by import By
-from selenium.webdriver.remote.webdriver import WebElement
+from appium.webdriver import WebElement
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.wait import WebDriverWait
 from waiting import wait as wait_lib
