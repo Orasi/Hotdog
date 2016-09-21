@@ -1,7 +1,7 @@
 import datetime
 import requests
 import os
-
+import base64
 import sys
 
 from hotdog.FilePath import get_full_path
@@ -22,32 +22,45 @@ def takeScreenshot(driver, imageName):
 
 def UploadToMustard(test, status, error_message=None, stacktrace=None):
 
-    if test.options['mustard'] and not test.skipMustard:
+    if True:
         try:
+
             imageName = PROJECTFOLDER + str(int(round(time.time() * 1000)))+'.png'
             if takeScreenshot(test.driver, imageName):
-                files = {'screenshot': open(imageName, 'rb')}
+                with open(imageName, "rb") as image_file:
+                  files = base64.b64encode(image_file.read())
+                files = "data:image/png;base64," + files.decode()
             else:
                 files = None
         except:
             files = None
 
 
+        if test.testcase_id:
+            test_identifier = test._testMethodName
+        else:
+            test_identifier = test._testMethodName
+
         platform = test.desired_caps['platformName'] if 'platformName' in test.desired_caps else test.desired_caps['platform']
-        payload = {'project_id': MustardKey,
-                   'test_id': test.testcase_id,
-                   'device_id': getDeviceID(test),
-                   'test_name': test._testMethodName,
-                   'status': status,
-                   'comment': error_message,
-                   'stacktrace': stacktrace,
-                   'device_platform': platform,
-                   'device_type': test.options['manufacturer'] + ' ' +test.options['model'],
-                   'os_version': test.options['osv'],
-                   'link': test.resultLink
-                   }
+        payload = {"result":{ "project_id": MustardKey,
+                              "result_type": "automated",
+                               "environment_id": getDeviceID(test),
+                               "testcase_id": test_identifier,
+                               "status": status,
+                               "comment": error_message,
+                               "screenshot": files,
+                                "options": {
+                                   "stacktrace": stacktrace,
+                                   "device_platform": platform,
+                                   "device_type": test.options["manufacturer"] + " " +test.options["model"],
+                                   "os_version": test.options["osv"],
+                                   "link": test.resultLink
+                                }
+                      }
+                 }
         if files:
-            Upload(payload, files)
+            Upload(payload)
+            # Upload(payload, files)
         else:
             Upload(payload)
 
@@ -92,12 +105,15 @@ def UploadPerformance(device, name, time):
 def Upload(payload, files=None):
     caughtException = False
     try:
-        r = requests.post(MustardURL, data=payload, files=files)
+        r = requests.post(MustardURL, json=payload, files=files)
+        print(r.text)
     except:
         exceptionMessage = str(sys.exc_info()[1])
         caughtException = True
+        print(exceptionMessage)
 
     if  caughtException or r.status_code != 200:
+        # print(r.text)
         bl = PROJECTFOLDER + '/MustardFailSafe.txt'
 
         with open(bl, 'a') as backlog:

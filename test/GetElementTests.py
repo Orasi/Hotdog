@@ -50,6 +50,14 @@ class GetElementTests(HotDogBaseTest):
         assert element.__class__.__name__ == 'BaseElement'
         assert element.element.__class__.__name__ == 'WebElement'
 
+    def test_getsJsClick(self):
+        self.driver.implicitly_wait(15)
+        self.driver.get('https://the-internet.herokuapp.com/checkboxes')
+        element =  self.driver.find_element(by=By.TAG_NAME, value='input')
+        assert element.__class__.__name__ == 'BaseElement'
+        assert element.element.__class__.__name__ == 'WebElement'
+        element.jsClick()
+
     def test_getsBaseElements(self):
         self.driver.implicitly_wait(15)
         self.driver.get('https://the-internet.herokuapp.com/checkboxes')
