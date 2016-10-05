@@ -278,10 +278,7 @@ class BaseElement(WebElement):
                     '(window.innerHeight || document.documentElement.clientHeight) && '
                     'rect.left <= (window.innerWidth || document.documentElement.clientWidth));'
             '}'
-            'function isOverflowed(el) {'
-                'return el.scrollHeight > el.clientHeight || el.scrollWidth > el.clientWidth;'
-            '}'
-            'return isElementInViewPort($(arguments[0])[0]) && isOverflowed($(arguments[0])) == false', self)
+            'return isElementInViewPort($(arguments[0])[0])', self)
 
     def is_displayed(self, timeout=0):
         '''Overrides default implementation of is_displayed to allow an optional timeout
