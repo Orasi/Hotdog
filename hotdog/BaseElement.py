@@ -267,6 +267,19 @@ class BaseElement(WebElement):
         self.driver.tap([loc])
         return self
 
+    def is_element_in_viewport(self):
+        '''Returns whether the element is within the viewport or not
+          :return: Boolean: True if in viewport, False if not
+          '''
+        return self.driver.execute_script(
+            'function isElementInViewPort(el) { '
+                'var rect = el.getBoundingClientRect(); '
+                'return (rect.bottom >= 0 && rect.right >= 0 && rect.top <= '
+                    '(window.innerHeight || document.documentElement.clientHeight) && '
+                    'rect.left <= (window.innerWidth || document.documentElement.clientWidth));'
+            '}'
+            'return isElementInViewPort($(arguments[0])[0])', self)
+
     def is_displayed(self, timeout=0):
         '''Overrides default implementation of is_displayed to allow an optional timeout
         :param timeout: Allowed Time for element to appear
