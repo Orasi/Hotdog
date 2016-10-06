@@ -37,7 +37,7 @@ def UploadToMustard(test, status, error_message=None, stacktrace=None):
 
 
         if test.testcase_id:
-            test_identifier = test._testMethodName
+            test_identifier = test.testcase_id
         else:
             test_identifier = test._testMethodName
 
@@ -49,11 +49,9 @@ def UploadToMustard(test, status, error_message=None, stacktrace=None):
                                "status": status,
                                "comment": error_message,
                                "screenshot": files,
-                                "options": {
-                                   "stacktrace": stacktrace,
-                                   "display_name": test.options["manufacturer"] + " " +test.options["model"] + " " + test.options["osv"],
-                                   "link": test.resultLink
-                                }
+                               "stacktrace": stacktrace,
+                               "display_name": test.options["manufacturer"] + " " +test.options["model"] + " " + test.options["osv"],
+                               "link": test.resultLink
                       }
                  }
         if files:
