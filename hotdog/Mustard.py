@@ -22,7 +22,7 @@ def takeScreenshot(driver, imageName):
 
 def UploadToMustard(test, status, error_message=None, stacktrace=None):
 
-    if True:
+    if test.options['mustard']:
         try:
 
             imageName = PROJECTFOLDER + str(int(round(time.time() * 1000)))+'.png'
