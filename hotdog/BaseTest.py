@@ -63,6 +63,7 @@ class HotDogBaseTest(unittest.TestCase):
                                 'provider':     'local-'+HotDogBaseTest.LOCAL_BROWSER,
                                 'osv':          'Local',
                                 'model':        'local',
+                                "idleTimeout":   360
                                 }
                 }
             else:
