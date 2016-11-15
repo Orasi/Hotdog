@@ -1,6 +1,7 @@
 import time
 from random import randint
 
+from hotdog.TestStep import TestStep
 from selenium.common.exceptions import WebDriverException, StaleElementReferenceException, NoSuchElementException
 from selenium.webdriver.support.color import Color
 from selenium.webdriver import ActionChains
@@ -99,6 +100,7 @@ class BaseElement(WebElement):
 
     @property
     @element_action
+    @TestStep('Take Screenshot - {args[0].element}')
     def screenshot_as_base64(self):
         return self.element.screenshot_as_base64
 
@@ -139,6 +141,7 @@ class BaseElement(WebElement):
     def is_enabled(self):
         return self.element.is_enabled()
 
+    @TestStep('Element Submitted:  {args[0]}')
     @element_action
     def submit(self):
         self.element.submit()
@@ -149,6 +152,7 @@ class BaseElement(WebElement):
         self.driver.execute_async_script(script, self)
         return self
 
+    @TestStep('Javascript executed:  {args[1]}')
     @element_action
     def javascript(self, script):
         script = script.replace("this", 'arguments[0]')
@@ -190,6 +194,7 @@ class BaseElement(WebElement):
         self.send_keys(text)
         return self
 
+    @TestStep('Clear Text Field: {args[0]}')
     @element_action
     def clear(self):
         if self.debug:
@@ -197,6 +202,7 @@ class BaseElement(WebElement):
         self.element.clear()
         return self
 
+    @TestStep('Set Text Value:  {args[0]} to {args[1]}')
     @element_action
     def send_keys(self, value):
         if self.debug:
@@ -204,25 +210,30 @@ class BaseElement(WebElement):
         self.element.send_keys(value)
         return self
 
+
     @element_action
+    @TestStep('Click Element: {args[0]}')
     def click(self):
         if self.debug:
             self.flash()
         self.element.click()
         return self
 
+    @TestStep('JSClick Element: {args[0]}')
     def jsClick(self):
         if self.debug:
             self.flash()
         self.javascript('this.click()')
         return self
 
+    @TestStep('Focus Element: {args[0]}')
     def focus(self):
         if self.debug:
             self.flash()
         self.javascript('this.focus()')
         return self
 
+    @TestStep('Hover Element: {args[0]}')
     @element_action
     def hover(self):
         '''
@@ -240,14 +251,17 @@ class BaseElement(WebElement):
         hov.perform()
         return self
 
+    @TestStep('Scroll Element Into View: {args[0]}')
     def scrollIntoView(self):
         self.javascript('this.scrollIntoView()')
         return self
 
+    @TestStep('Scroll Element To Center: {args[0]}')
     def scroll_element_to_center(self):
         self.driver.execute_script("$('html,body').animate({scrollTop: $(arguments[0]).offset().top - $(window).height() / 2 + $(arguments[0]).height() / 2},'fast');", self)
         return self
 
+    @TestStep('ScrollElement To View Center: {args[0]}')
     def scrollIntoViewCenter(self):
         # scrollIntoView scrolls untill object at top of screen
         # the next javascript scrolls down half a page (1/2 the viewport height)
@@ -347,6 +361,7 @@ class BaseElement(WebElement):
         except:
             self.element = None
             raise
+
 
     def find(self, objectName, type=None):
         locators = getattr(self, objectName)

@@ -21,13 +21,15 @@ def TestStep(argument=False):
 
             builtins.threadlocal.driver.step_log.add_step(step)
             try:
-                function(*args, **kwargs)
+                result = function(*args, **kwargs)
             except:
                 step.end_step('error')
                 raise
             else:
                 step.end_step('complete')
             builtins.threadlocal.driver.step_log.close_step()
+
+            return result
 
         return wrapper
     return test_step
