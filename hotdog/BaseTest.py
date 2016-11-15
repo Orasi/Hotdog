@@ -12,6 +12,8 @@ import builtins
 import threading
 import webium.settings
 from hotdog.BaseDriver import BaseWebDriver
+from hotdog.TestStep import StepLog, Step
+
 webium.settings.implicit_timeout = 5
 
 class HotDogBaseTest(unittest.TestCase):
@@ -105,6 +107,7 @@ class HotDogBaseTest(unittest.TestCase):
                         url,
                         desired_caps
                     )
+                builtins.threadlocal.driver.step_log = StepLog()
             except:
                 #print("Testcase [%s] COULD NOT START on device [%s]" % (self._testMethodName, self.options['deviceName']))
                 print(sys.exc_info()[1])
@@ -156,12 +159,16 @@ class HotDogBaseTest(unittest.TestCase):
                 print(sys.exc_info()[1])
                 raise unittest.SkipTest('Could not launch driver')
             self.driver.__class__ = self.DefaultWebDriver
+            self.driver.test_steps = []
+            self.driver.tracelog = []
             builtins.threadlocal.driver = self.driver
+            builtins.threadlocal.driver.step_log = StepLog()
             self.options['deviceName'] = self.environmentName()
             print("Testcase [%s] started on device [%s]" % (self._testMethodName, self.options['deviceName']))
             sleep(1)
         else:
             self.driver = builtins.threadlocal.driver
+            builtins.threadlocal.driver.step_log = StepLog()
             self.driver.__class__ = self.DefaultWebDriver
             self.options['deviceName'] = self.environmentName()
             print("Testcase [%s] started on device [%s]" % (self._testMethodName, self.options['deviceName']))
@@ -202,6 +209,10 @@ class HotDogBaseTest(unittest.TestCase):
             except: pass
         try: builtins.threadlocal.driver.quit()
         except: pass
+
+    def test_step(self, step_name):
+        self.driver.step_log.add_step(Step(step_name))
+        return self.driver.step_log.close_step
 
     def run(self, result=None):
         super().run( result= self.defaultTestResult())
