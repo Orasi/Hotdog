@@ -146,6 +146,7 @@ class BaseElement(WebElement):
     def submit(self):
         self.element.submit()
 
+    @TestStep('Javascript executed:  {args[1]}')
     @element_action
     def javascript_async(self, script):
         script = script.replace("this", 'arguments[0]')
@@ -271,6 +272,7 @@ class BaseElement(WebElement):
         self.javascript('this.scrollIntoView()')
         self.javascript('window.scrollTo(0, (document.documentElement.scrollTop || document.body.scrollTop) - window.innerHeight / 2)')
 
+    @TestStep('Tap Element: {args[0]}')
     @element_action
     def tap(self):
         location = self.element.location

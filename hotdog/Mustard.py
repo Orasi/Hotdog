@@ -51,7 +51,8 @@ def UploadToMustard(test, status, error_message=None, stacktrace=None):
                                "screenshot": files,
                                "stacktrace": stacktrace,
                                "display_name": test.options["manufacturer"] + " " +test.options["model"] + " " + test.options["osv"],
-                               "link": test.resultLink
+                               "link": test.resultLink,
+                               "step_log": test.driver.step_log.to_json()
                       }
                  }
         if files:
