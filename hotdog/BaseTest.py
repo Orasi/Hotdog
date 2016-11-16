@@ -211,7 +211,7 @@ class HotDogBaseTest(unittest.TestCase):
         try: builtins.threadlocal.driver.quit()
         except: pass
 
-    def test_step(self, step_name):
+    def add_test_step(self, step_name):
         self.driver.step_log.add_step(Step(step_name))
         return self.driver.step_log.close_step
 
