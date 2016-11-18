@@ -1,12 +1,10 @@
 import builtins
 import json
-
 import time
-
 import re
 
 
-def TestStep(argument=False):
+def TestStep(argument=False, log_result=False):
     def test_step(function):
         def wrapper(*args, **kwargs):
 
@@ -26,9 +24,13 @@ def TestStep(argument=False):
                 step.end_step('error')
                 raise
             else:
+                if log_result:
+                    result_step = Step('Result [%s]' % result)
+                    builtins.threadlocal.driver.step_log.add_step(result_step)
+                    result_step.end_step('complete')
+                    builtins.threadlocal.driver.step_log.close_step()
                 step.end_step('complete')
             builtins.threadlocal.driver.step_log.close_step()
-
             return result
 
         return wrapper
