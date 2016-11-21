@@ -7,14 +7,24 @@ from hotdog.Mustard import *
 class UploadResults(unittest.TestResult):
     projectFolder = os.environ['PROJECTFOLDER']
 
+    def end_steps(self, step_log, status):
+        for step in  step_log.open_step:
+            step.end_step(status)
+
     def addError(self, test, err):
         stack = self._exc_info_to_string(err, test)
         error_message = self.get_error_message(err, stack)
+
+        try:
+            self.end_steps(test.driver.step_log, 'error')
+        except:
+            pass
 
         UploadToMustard(test, 'fail', error_message=error_message, stacktrace=stack)
         self.RemoveApp(test)
         builtins.threadlocal.driver = None
         super().addError( test, err)
+
         print("Testcase [%s] ended with status [%s] on device [%s]\n %s" % (test._testMethodName,
                                                                        'ERROR',
                                                                        test.options['deviceName'],
@@ -22,6 +32,11 @@ class UploadResults(unittest.TestResult):
     def addFailure(self, test, err):
         stack = self._exc_info_to_string(err, test)
         error_message =  self.get_error_message(err, stack)
+
+        try:
+            self.end_steps(test.driver.step_log, 'error')
+        except:
+            pass
 
         UploadToMustard(test, 'fail', error_message=error_message, stacktrace=stack)
 
@@ -34,6 +49,12 @@ class UploadResults(unittest.TestResult):
                                                                        stack))
 
     def addSuccess(self, test):
+
+        try:
+            self.end_steps(test.driver.step_log, 'complete')
+        except:
+            pass
+
         UploadToMustard(test, 'pass')
         try:
             if not builtins.threadlocal.keepSession:
@@ -42,6 +63,7 @@ class UploadResults(unittest.TestResult):
             builtins.threadlocal.driver = None
             self.RemoveApp(test)
         super().addSuccess(test)
+
         print("Testcase [%s] ended with status [%s] on device [%s]" % (test._testMethodName,
                                                                        'PASS',
                                                                        test.options['deviceName']))

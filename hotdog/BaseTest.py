@@ -174,6 +174,7 @@ class HotDogBaseTest(unittest.TestCase):
             self.options['deviceName'] = self.environmentName()
             print("Testcase [%s] started on device [%s]" % (self._testMethodName, self.options['deviceName']))
             self.continueWithDriver = True
+        self.end_step = self.add_test_step(self._testMethodName)
 
     def environmentName(self):
         if 'deviceName' in self.options:
@@ -194,6 +195,7 @@ class HotDogBaseTest(unittest.TestCase):
                     sauce.jobs.update_job(self.driver.session_id, passed=False, name=self._testMethodName)
             except:
                 pass
+
 
     @classmethod
     def tearDownClass(cls):
