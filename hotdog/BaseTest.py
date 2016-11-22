@@ -3,6 +3,9 @@ from appium import webdriver
 from selenium import webdriver as seleniumWebdriver
 from sauceclient import SauceClient
 import sys
+
+from selenium.webdriver import DesiredCapabilities
+
 from hotdog import Mustard
 from hotdog.Results import UploadResults
 from hotdog.Config import GetConfig
@@ -96,6 +99,9 @@ class HotDogBaseTest(unittest.TestCase):
                 elif provider.lower() == 'local-ie':
                     runLocal = True
                     builtins.threadlocal.driver = seleniumWebdriver.Ie()
+                elif provider.lower() == 'local-firefox:marionette':
+                    runLocal = True
+                    builtins.threadlocal.driver = seleniumWebdriver.Ie()
                 elif provider.lower() == 'mcweb':
                     url = GetConfig('MC_URL') + '/wd/hub'
                 elif provider.lower() == 'mcmobile':
@@ -133,9 +139,16 @@ class HotDogBaseTest(unittest.TestCase):
                 elif self.provider.lower() == 'local-chrome':
                     runLocal = True
                     self.driver = seleniumWebdriver.Chrome()
-                elif self.provider.lower() == 'local-firefox':
+                elif self.provider.lower() == 'local-firefox:marionette':
                     runLocal = True
-                    self.driver = seleniumWebdriver.Firefox()
+                    caps = DesiredCapabilities.FIREFOX
+                    caps['marionette'] = True
+                    self.driver = seleniumWebdriver.Firefox(caps)
+                elif self.provider.lower() == 'local-firefox':
+                    caps = DesiredCapabilities.FIREFOX
+                    caps['marionette'] = False
+                    runLocal = True
+                    self.driver = seleniumWebdriver.Firefox(caps)
                 elif self.provider.lower() == 'local-safari':
                     runLocal = True
                     self.driver = seleniumWebdriver.Safari()

@@ -234,8 +234,8 @@ class BaseElement(WebElement):
         self.javascript('this.focus()')
         return self
 
-    @TestStep('Hover Element: {args[0]}')
     @element_action
+    @TestStep('Hover Element: {args[0]}')
     def hover(self):
         '''
         Performs Action Chain Hover on element
@@ -272,8 +272,8 @@ class BaseElement(WebElement):
         self.javascript('this.scrollIntoView()')
         self.javascript('window.scrollTo(0, (document.documentElement.scrollTop || document.body.scrollTop) - window.innerHeight / 2)')
 
-    @TestStep('Tap Element: {args[0]}')
     @element_action
+    @TestStep('Tap Element: {args[0]}')
     def tap(self):
         location = self.element.location
         size = self.element.size
