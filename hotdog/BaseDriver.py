@@ -66,6 +66,14 @@ class BaseWebDriver(WebDriver):
     def create_web_element(self, element_id):
         return self.DefaultElementType(self, element_id, w3c=self.w3c)
 
+    def get_new_handle(self, existing_handles):
+    # IE doesn't guarantee the order of window handles when a new window is opened
+    #
+    # @param existing_handles The handles before the action of opening a new window
+        for handle in super().window_handles:
+            if handle not in existing_handles:
+                return handle
+
 def get_driver():
     global _driver_instance
     if not _driver_instance:
