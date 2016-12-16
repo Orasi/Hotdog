@@ -50,7 +50,9 @@ class HotDogBaseTest(unittest.TestCase):
     try:
         app_env =  os.environ['APP_DATA'].split('<|>')
         app_env = app_env[0]
+        print('APP_DATA Environment Data found.  Appending app_env [%s] to test' % app_env[0])
         app_url = app_env[1]
+        print('APP_DATA Environment Data found.  Appending app_url [%s] to test' % app_env[1])
     except:
         pass
 
