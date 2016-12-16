@@ -5,7 +5,7 @@ from sauceclient import SauceClient
 import sys
 
 from selenium.webdriver import DesiredCapabilities
-
+import os
 from hotdog import Mustard
 from hotdog.Results import UploadResults
 from hotdog.Config import GetConfig
@@ -47,6 +47,12 @@ class HotDogBaseTest(unittest.TestCase):
     timersStart = {}
     timersTotal = {}
     testcase_id = ''
+    try:
+        app_env =  os.environ['APP_DATA'].split('<|>')
+        app_env = app_env[0]
+        app_url = app_env[1]
+    except:
+        pass
 
     @classmethod
     def setUpClass(cls, platform='mobile'):
@@ -90,9 +96,16 @@ class HotDogBaseTest(unittest.TestCase):
                 elif provider.lower() == 'local-chrome':
                     runLocal = True
                     builtins.threadlocal.driver = seleniumWebdriver.Chrome()
-                elif provider.lower() == 'local-firefox':
+                elif provider.lower() == 'local-firefox:marionette':
                     runLocal = True
-                    builtins.threadlocal.driver = seleniumWebdriver.Firefox()
+                    caps = DesiredCapabilities.FIREFOX
+                    caps['marionette'] = True
+                    builtins.threadlocal.driver = seleniumWebdriver.Firefox(caps)
+                elif provider.lower() == 'local-firefox':
+                    caps = DesiredCapabilities.FIREFOX
+                    caps['marionette'] = False
+                    runLocal = True
+                    builtins.threadlocal.driver = seleniumWebdriver.Firefox(caps)
                 elif provider.lower() == 'local-safari':
                     runLocal = True
                     builtins.threadlocal.driver = seleniumWebdriver.Safari()
