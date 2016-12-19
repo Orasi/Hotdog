@@ -1,6 +1,6 @@
 import time
 
-from hotdog.TestStep import Step
+from hotdog.TestStep import Step, TestStep
 from selenium.common.exceptions import WebDriverException, NoSuchElementException
 from random import randint
 from hotdog import Mustard
@@ -188,3 +188,7 @@ class HotDogBasePage(object):
     def add_test_step(self, step_name):
         self.driver.step_log.add_step(Step(step_name))
         return self.driver.step_log.close_step
+
+    @TestStep('Click on {args[3]} at coordinates: x - {args[1]}, y - {args[2]}')
+    def click_at(self, x, y, message='location'):
+        self.driver.execute_script("$(document.elementFromPoint(" + str(x) + "," + str(y) + ")).click();")
