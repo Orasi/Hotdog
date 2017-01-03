@@ -95,6 +95,8 @@ class HotDogBaseTest(unittest.TestCase):
                     url = "http://%s:%s@ondemand.saucelabs.com:80/wd/hub" % (GetConfig('SAUCE_USERNAME'), GetConfig('SAUCE_ACCESS'))
                     if desired_caps['browserName'] == 'internet explorer':
                         desired_caps['requireWindowFocus'] = True
+                    elif desired_caps['browserName'] == 'chrome':
+                        builtins.threadlocal.config['desiredCaps']['chromeOptions'] = {'excludeSwitches': ['disable-component-update']}
                 elif provider.lower() == 'local-chrome':
                     runLocal = True
                     builtins.threadlocal.driver = seleniumWebdriver.Chrome()
@@ -151,6 +153,8 @@ class HotDogBaseTest(unittest.TestCase):
                     url = self.SAUCE_URL
                     if self.desired_caps['browserName'] == 'internet explorer':
                         self.desired_caps['requireWindowFocus'] = True
+                    elif self.desired_caps['browserName'] == 'chrome':
+                        builtins.threadlocal.config['desiredCaps']['chromeOptions'] = {'excludeSwitches': ['disable-component-update']}
                 elif self.provider.lower() == 'local-chrome':
                     runLocal = True
                     self.driver = seleniumWebdriver.Chrome()
