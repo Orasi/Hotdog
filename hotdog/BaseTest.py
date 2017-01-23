@@ -106,10 +106,10 @@ class HotDogBaseTest(unittest.TestCase):
                     caps['marionette'] = True
                     builtins.threadlocal.driver = seleniumWebdriver.Firefox(caps)
                 elif provider.lower() == 'local-firefox':
-                    caps = DesiredCapabilities.FIREFOX
-                    caps['marionette'] = False
+                    # caps = DesiredCapabilities.FIREFOX
+                    # caps['marionette'] = False
                     runLocal = True
-                    builtins.threadlocal.driver = seleniumWebdriver.Firefox(caps)
+                    builtins.threadlocal.driver = seleniumWebdriver.Firefox() # add caps
                 elif provider.lower() == 'local-safari':
                     runLocal = True
                     builtins.threadlocal.driver = seleniumWebdriver.Safari()
