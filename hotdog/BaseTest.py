@@ -250,7 +250,14 @@ class HotDogBaseTest(unittest.TestCase):
         return self.driver.step_log.close_step
 
     def run(self, result=None):
-        super().run( result= self.defaultTestResult())
+        try:
+            super().run( result= self.defaultTestResult())
+        except:
+            try:
+                self.driver.quit()
+            except:
+                pass
+            raise
 
     def timerStart(self, name):
         self.timersStart[name] = time()
