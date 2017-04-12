@@ -66,51 +66,50 @@ def UploadToMustard(test, status, error_message=None, stacktrace=None):
         except:
             pass
 
-def UploadScreenshot(self, test, name=None):
-    imageName = PROJECTFOLDER + str(int(round(time.time() * 1000)))+'.png'
-    if test.options['mustard']:
-        if takeScreenshot(test.driver, imageName):
-            files = {'screenshot': open(imageName, 'rb')}
-
-            payload = {'project_id': MustardKey,
-                   'result_type': 'screenshot',
-                   'device_id': getDeviceID(test),
-                   'test_name': name if name else test.__class__.__name__,
-                   }
-
-            Upload(payload, files)
-
-        try:
-            os.remove(imageName)
-        except:
-            pass
-
-
-
-def UploadPerformance(device, name, time):
-
-    payload = {'project_id': MustardKey,
-               'result_type': 'performance',
-               'time': time,
-               'device_id': device,
-               'test_name': name,
-               }
-
-    Upload(payload)
+# def UploadScreenshot(self, test, name=None):
+#     imageName = PROJECTFOLDER + str(int(round(time.time() * 1000)))+'.png'
+#     if test.options['mustard']:
+#         if takeScreenshot(test.driver, imageName):
+#             files = {'screenshot': open(imageName, 'rb')}
+#
+#             payload = {'project_id': MustardKey,
+#                    'result_type': 'screenshot',
+#                    'device_id': getDeviceID(test),
+#                    'test_name': name if name else test.__class__.__name__,
+#                    }
+#
+#             Upload(payload, files)
+#
+#         try:
+#             os.remove(imageName)
+#         except:
+#             pass
+#
+#
+#
+# def UploadPerformance(device, name, time):
+#
+#     payload = {'project_id': MustardKey,
+#                'result_type': 'performance',
+#                'time': time,
+#                'device_id': device,
+#                'test_name': name,
+#                }
+#
+#     Upload(payload)
 
 
 def Upload(payload, files=None):
     caughtException = False
     try:
         r = requests.post(MustardURL, json=payload, files=files)
-        print(r.text)
+
     except:
         exceptionMessage = str(sys.exc_info()[1])
         caughtException = True
         print(exceptionMessage)
 
     if  caughtException or r.status_code != 200:
-        # print(r.text)
         bl = PROJECTFOLDER + '/MustardFailSafe.txt'
 
         with open(bl, 'a') as backlog:

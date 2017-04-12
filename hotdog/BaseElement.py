@@ -190,17 +190,28 @@ class BaseElement(WebElement):
         self.javascript("this.style.border='0px'")
         return self
 
-    def set(self, text):
-        self.clear()
+    def set(self, text, skip_clear=False):
+        '''
+        Set the elements text value to the desired text
+        @param skip_clear True or False to clear the elements current text, default is to clear
+        @param text The text to set the text value of the element
+        :return this element (self)
+        '''
+        try:
+            if not skip_clear:
+                self.clear()
+        except:
+            pass
         self.send_keys(text)
         return self
+
 
     @TestStep('Clear Text Field: {args[0]}')
     @element_action
     def clear(self):
         if self.debug:
             self.flash()
-        self.element.clear()
+        self.driver.execute_script('arguments[0].value= ""; arguments[0].text = "";', self)
         return self
 
     @TestStep('Set Text Value:  {args[0]} to {args[1]}')

@@ -1,27 +1,27 @@
 import unittest
-from appium import webdriver
-from selenium import webdriver as seleniumWebdriver
-from sauceclient import SauceClient
 import sys
-
-from selenium.webdriver import DesiredCapabilities
 import os
+import builtins
+import threading
+from appium import webdriver
+from appium_selector.DeviceSelector import DeviceSelector
 from hotdog import Mustard
 from hotdog.Results import UploadResults
 from hotdog.Config import GetConfig
-from time import sleep, time
-from appium_selector.DeviceSelector import DeviceSelector
-import builtins
-import threading
-import webium.settings
 from hotdog.BaseDriver import BaseWebDriver
 from hotdog.TestStep import StepLog, Step
+from sauceclient import SauceClient
+from selenium import webdriver as seleniumWebdriver
+from selenium.webdriver import DesiredCapabilities
+from time import sleep, time
 
-webium.settings.implicit_timeout = 5
 
 class HotDogBaseTest(unittest.TestCase):
 
+    # HotDog Defaults.  Can be overridden in child classes
     DefaultWebDriver = BaseWebDriver
+    failed = False
+    defaultTestResult = UploadResults
 
     #Boilerplate Settings Do not Change
     #Change in Config.xml
@@ -31,18 +31,28 @@ class HotDogBaseTest(unittest.TestCase):
     SAUCE_URL = "http://%s:%s@ondemand.saucelabs.com:80/wd/hub" % (SAUCE_USERNAME, SAUCE_ACCESS)
     GRID_URL = GetConfig('GRID_URL') + '/wd/hub'
     LOCAL_APPIUM_URL = GetConfig('LOCAL_APPIUM_URL')
+
     # set SKIP_SELECTOR to bypass the device selector & run local with platfrom from LOCAL_BROWSER
     try:
         SKIP_SELECTOR = GetConfig('SKIP_SELECTOR')
         LOCAL_BROWSER = GetConfig('LOCAL_BROWSER')
+        DEFAULT_CONFIG = {
+                    'desiredCaps': {'browserName':  'Local',
+                                    'deviceName':   'Local',
+                                    'platformName': 'Local',
+                                    'version':      'Local'},
+                    'options': {'manufacturer': 'local',
+                                'mustard':       False,
+                                'provider':     'local-'+ LOCAL_BROWSER,
+                                'osv':          'Local',
+                                'model':        'local',
+                                "idleTimeout":   360
+                                }
+                }
     except:
         #xml file is missing SKIP_SELECTOR/LOCAL_BROWSER
         SKIP_SELECTOR = 'False'
-        # LOCAL_BROWSER = 'firefox'   # will not be used
 
-    failed = False
-    skipMustard = False
-    defaultTestResult = UploadResults
 
     timersStart = {}
     timersTotal = {}
@@ -56,157 +66,68 @@ class HotDogBaseTest(unittest.TestCase):
     except:
         pass
 
+
+
     @classmethod
     def setUpClass(cls, platform='mobile'):
         if not hasattr(builtins, 'threadlocal'):
-            runLocal = False
+
             builtins.threadlocal = threading.local()
 
+            #Use Default Driver or display device selector
             if HotDogBaseTest.SKIP_SELECTOR == 'True':
-                # skip device selector, fill in defaults for running locally
-                builtins.threadlocal.config = {
-                    'desiredCaps': {'browserName':  'Local',
-                                    'deviceName':   'Local',
-                                    'platformName': 'Local',
-                                    'version':      'Local'},
-                    'options': {'manufacturer': 'local',
-                                'mustard':       False,
-                                'provider':     'local-'+HotDogBaseTest.LOCAL_BROWSER,
-                                'osv':          'Local',
-                                'model':        'local',
-                                "idleTimeout":   360
-                                }
-                }
+                builtins.threadlocal.config = HotDogBaseTest.DEFAULT_CONFIG
             else:
-                # use selector to get device/platform
                 builtins.threadlocal.config = DeviceSelector(platform=platform).getDevice()[0]
 
-            provider = builtins.threadlocal.config['options']['provider']
+            # If testing mobile apps, append app info into desired caps
             if 'platformName' in builtins.threadlocal.config['desiredCaps']:
                 if builtins.threadlocal.config['desiredCaps']['platformName'].upper() == 'ANDROID':
                     builtins.threadlocal.config['desiredCaps']['app'] = GetConfig('ANDROID_APP_URL')
                 else:
                     builtins.threadlocal.config['desiredCaps']['app'] = GetConfig('IOS_APP_URL')
-            desired_caps = builtins.threadlocal.config['desiredCaps']
-            try:
-                if 'grid' in provider:
-                    url = GetConfig('GRID_URL') + '/wd/hub'
-                elif 'sauce' in provider:
-                    url = "http://%s:%s@ondemand.saucelabs.com:80/wd/hub" % (GetConfig('SAUCE_USERNAME'), GetConfig('SAUCE_ACCESS'))
-                    if desired_caps['browserName'] == 'internet explorer':
-                        desired_caps['requireWindowFocus'] = True
-                    elif desired_caps['browserName'] == 'chrome' and desired_caps.get('chromeOptions') is None:
-                        builtins.threadlocal.config['desiredCaps']['chromeOptions'] = {'excludeSwitches': ['disable-component-update']}
-                elif provider.lower() == 'local-chrome':
-                    runLocal = True
-                    builtins.threadlocal.driver = seleniumWebdriver.Chrome()
-                elif provider.lower() == 'local-firefox:marionette':
-                    runLocal = True
-                    caps = DesiredCapabilities.FIREFOX
-                    caps['marionette'] = True
-                    builtins.threadlocal.driver = seleniumWebdriver.Firefox(caps)
-                elif provider.lower() == 'local-firefox':
-                    # caps = DesiredCapabilities.FIREFOX
-                    # caps['marionette'] = False
-                    runLocal = True
-                    builtins.threadlocal.driver = seleniumWebdriver.Firefox() # add caps
-                elif provider.lower() == 'local-safari':
-                    runLocal = True
-                    builtins.threadlocal.driver = seleniumWebdriver.Safari()
-                elif provider.lower() == 'local-ie':
-                    runLocal = True
-                    builtins.threadlocal.driver = seleniumWebdriver.Ie()
-                elif provider.lower() == 'local-firefox:marionette':
-                    runLocal = True
-                    builtins.threadlocal.driver = seleniumWebdriver.Ie()
-                elif provider.lower() == 'mcweb':
-                    url = GetConfig('MC_URL') + '/wd/hub'
-                elif provider.lower() == 'mcmobile':
-                    url = GetConfig('MC_URL') + '/wd/hub'
-                else:
-                    url = GetConfig('GRID_URL') + '/wd/hub'
 
-                if not runLocal:
-                    builtins.threadlocal.driver = webdriver.Remote(
-                        url,
-                        desired_caps
-                    )
-                builtins.threadlocal.driver.step_log = StepLog()
+            # Instantiate Driver
+            desired_caps = builtins.threadlocal.config['desiredCaps']
+            provider = builtins.threadlocal.config['options']['provider']
+            try:
+                builtins.threadlocal.driver = cls.select_driver(cls, desired_caps, provider)
             except:
-                #print("Testcase [%s] COULD NOT START on device [%s]" % (self._testMethodName, self.options['deviceName']))
                 print(sys.exc_info()[1])
                 raise unittest.SkipTest('Could not launch driver')
 
 
     def setUp(self):
-        runLocal = False
+
+        # Setup Test
         self.desired_caps = builtins.threadlocal.config['desiredCaps']
         self.options = builtins.threadlocal.config['options']
-        self.resultLink = None
+        self.options['deviceName'] = self.environmentName()
         self.provider = self.options['provider']
+        self.resultLink = None
+
+        # Reinitialize driver if destroyed
         if not builtins.threadlocal.driver:
 
             try:
-                if 'grid' in self.provider:
-                    url = self.GRID_URL
-                elif 'sauce' in self.provider:
-                    url = self.SAUCE_URL
-                    if self.desired_caps['browserName'] == 'internet explorer':
-                        self.desired_caps['requireWindowFocus'] = True
-                    elif self.desired_caps['browserName'] == 'chrome' and self.desired_caps.get('chromeOptions') is None:
-                        builtins.threadlocal.config['desiredCaps']['chromeOptions'] = {'excludeSwitches': ['disable-component-update']}
-                elif self.provider.lower() == 'local-chrome':
-                    runLocal = True
-                    self.driver = seleniumWebdriver.Chrome()
-                elif self.provider.lower() == 'local-firefox:marionette':
-                    runLocal = True
-                    caps = DesiredCapabilities.FIREFOX
-                    caps['marionette'] = True
-                    self.driver = seleniumWebdriver.Firefox(caps)
-                elif self.provider.lower() == 'local-firefox':
-                    caps = DesiredCapabilities.FIREFOX
-                    caps['marionette'] = False
-                    runLocal = True
-                    self.driver = seleniumWebdriver.Firefox(caps)
-                elif self.provider.lower() == 'local-safari':
-                    runLocal = True
-                    self.driver = seleniumWebdriver.Safari()
-                elif self.provider.lower() == 'local-ie':
-                    runLocal = True
-                    self.driver = seleniumWebdriver.Ie()
-                elif self.provider.lower() == 'mcweb':
-                    url = GetConfig('MC_URL') + '/wd/hub'
-                elif self.provider.lower() == 'mcmobile':
-                    url = GetConfig('MC_URL') + '/wd/hub'
-                else:
-                    url = self.GRID_URL
-
-                if not runLocal:
-                    self.driver = webdriver.Remote(
-                        url,
-                        self.desired_caps
-                    )
+                self.driver = self.__class__.select_driver(self, self.desired_caps, self.provider)
+                builtins.threadlocal.driver = self.driver
                 self.continueWithDriver = False
             except:
                 print("Testcase [%s] COULD NOT START on device [%s]" % (self._testMethodName, self.options['deviceName']))
                 print(sys.exc_info()[1])
                 raise unittest.SkipTest('Could not launch driver')
-            self.driver.__class__ = self.DefaultWebDriver
-            self.driver.test_steps = []
-            self.driver.tracelog = []
-            builtins.threadlocal.driver = self.driver
-            builtins.threadlocal.driver.step_log = StepLog()
-            self.options['deviceName'] = self.environmentName()
-            print("Testcase [%s] started on device [%s]" % (self._testMethodName, self.options['deviceName']))
-            sleep(1)
+
         else:
             self.driver = builtins.threadlocal.driver
-            builtins.threadlocal.driver.step_log = StepLog()
-            self.driver.__class__ = self.DefaultWebDriver
-            self.options['deviceName'] = self.environmentName()
-            print("Testcase [%s] started on device [%s]" % (self._testMethodName, self.options['deviceName']))
             self.continueWithDriver = True
+
+        # Create root node for Step Log
+        builtins.threadlocal.driver.step_log = StepLog()
         self.end_step = self.add_test_step(self._testMethodName)
+
+        print("Testcase [%s] started on device [%s]" % (self._testMethodName, self.options['deviceName']))
+
 
     def environmentName(self):
         if 'deviceName' in self.options:
@@ -250,7 +171,14 @@ class HotDogBaseTest(unittest.TestCase):
         return self.driver.step_log.close_step
 
     def run(self, result=None):
-        super().run( result= self.defaultTestResult())
+        try:
+            super().run( result= self.defaultTestResult())
+        except:
+            try:
+                self.driver.quit()
+            except:
+                pass
+            raise
 
     def timerStart(self, name):
         self.timersStart[name] = time()
@@ -260,4 +188,60 @@ class HotDogBaseTest(unittest.TestCase):
         if self.options['mustard']:
             Mustard.UploadPerformance(Mustard.getDeviceID(self), name, self.timersTotal[name])
 
+    @staticmethod
+    def select_driver(cls, dc, provider):
+        runLocal = False
+        browser_profile = None
+
+        if 'grid' in provider:
+            # if self.desired_caps['browserName'].lower() == 'firefox':
+            #     browser_profile = seleniumWebdriver.FirefoxProfile('/home/matt/l7539ezh.GridTest')
+            if dc['platform'].lower() == 'windows':
+                dc['marionette'] = False
+            url = cls.GRID_URL
+        elif 'sauce' in provider:
+            url = cls.SAUCE_URL
+            if dc['browserName'] == 'internet explorer':
+                dc['requireWindowFocus'] = True
+            elif dc['browserName'] == 'chrome' and dc.get('chromeOptions') is None:
+                builtins.threadlocal.config['desiredCaps']['chromeOptions'] = {
+                    'excludeSwitches': ['disable-component-update']}
+        elif provider.lower() == 'local-chrome':
+            runLocal = True
+            driver = seleniumWebdriver.Chrome()
+        elif provider.lower() == 'local-firefox:marionette':
+            runLocal = True
+            caps = DesiredCapabilities.FIREFOX
+            caps['marionette'] = True
+            driver = seleniumWebdriver.Firefox(caps)
+        elif provider.lower() == 'local-firefox':
+            caps = DesiredCapabilities.FIREFOX
+            caps['marionette'] = False
+            runLocal = True
+            driver = seleniumWebdriver.Firefox(caps)
+        elif provider.lower() == 'local-safari':
+            runLocal = True
+            driver = seleniumWebdriver.Safari()
+        elif provider.lower() == 'local-ie':
+            runLocal = True
+            driver = seleniumWebdriver.Ie()
+        elif provider.lower() == 'mcweb':
+            url = GetConfig('MC_URL') + '/wd/hub'
+        elif provider.lower() == 'mcmobile':
+            url = GetConfig('MC_URL') + '/wd/hub'
+        else:
+            url = cls.GRID_URL
+
+        if not runLocal:
+            driver = webdriver.Remote(
+                url,
+                dc,
+                browser_profile=browser_profile
+            )
+
+        driver.__class__ = cls.DefaultWebDriver
+        driver.test_steps = []
+        driver.tracelog = []
+
+        return driver
 
