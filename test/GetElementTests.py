@@ -202,19 +202,19 @@ class GetElementTests(HotDogBaseTest):
         assert len(elements) > 0
 
     def test_elementNotWired(self):
-        self.driver.get('http://orasi.github.io/Selenium-Java-Core/sites/unitTests/orasi/core/interfaces/element.html')
+        self.driver.get('http://orasi.github.io/Chameleon/sites/unitTests/orasi/core/interfaces/element.html')
         test = TestPage(driver=self.driver)
         appear = test.find_element(by=By.ID, value='appear')
         assert appear.element == None
 
     def test_elementNotWiredFind(self):
-        self.driver.get('http://orasi.github.io/Selenium-Java-Core/sites/unitTests/orasi/core/interfaces/element.html')
+        self.driver.get('http://orasi.github.io/Chameleon/sites/unitTests/orasi/core/interfaces/element.html')
         test = TestPage(driver=self.driver)
         appear = test.find('notPresent')
         assert appear.element == None
 
     def test_elementNotWiredFindTyped(self):
-        self.driver.get('http://orasi.github.io/Selenium-Java-Core/sites/unitTests/orasi/core/interfaces/element.html')
+        self.driver.get('http://orasi.github.io/Chameleon/sites/unitTests/orasi/core/interfaces/element.html')
         test = TestPage(driver=self.driver)
         appear = test.find('notPresentTyped')
         assert appear.element == None
@@ -239,7 +239,7 @@ class GetElementTests(HotDogBaseTest):
         element.click(timeout=3)
 
     def test_elementActionSync(self):
-        self.driver.get('http://orasi.github.io/Selenium-Java-Core/sites/unitTests/orasi/core/interfaces/element.html')
+        self.driver.get('http://orasi.github.io/Chameleon/sites/unitTests/orasi/core/interfaces/element.html')
         test = TestPage(driver=self.driver)
         element = test.find('notPresent')
         element.click(timeout=6)
@@ -259,7 +259,7 @@ class GetElementTests(HotDogBaseTest):
             e.click()
 
     def test_elementsActionSync(self):
-        self.driver.get('http://orasi.github.io/Selenium-Java-Core/sites/unitTests/orasi/core/interfaces/element.html')
+        self.driver.get('http://orasi.github.io/Chameleon/sites/unitTests/orasi/core/interfaces/element.html')
         test = TestPage(driver=self.driver)
         element = test.finds('notPresent')
         for e in element:
@@ -274,7 +274,7 @@ class GetElementTests(HotDogBaseTest):
                 e.click()
 
     def test_elementActionsReload(self):
-        self.driver.get('http://orasi.github.io/Selenium-Java-Core/sites/unitTests/orasi/core/interfaces/element.html')
+        self.driver.get('http://orasi.github.io/Chameleon/sites/unitTests/orasi/core/interfaces/element.html')
         test = TestPage(driver=self.driver)
         element = test.find('notPresentTyped')
         element.click(timeout=10)
@@ -282,7 +282,7 @@ class GetElementTests(HotDogBaseTest):
         assert element.element.__class__.__name__ == 'WebElement', 'should be "WebElement" actually %s' % element.__class__.__name__
 
     def test_elementsActionsReload(self):
-        self.driver.get('http://orasi.github.io/Selenium-Java-Core/sites/unitTests/orasi/core/interfaces/element.html')
+        self.driver.get('http://orasi.github.io/Chameleon/sites/unitTests/orasi/core/interfaces/element.html')
         test = TestPage(driver=self.driver)
         elements = test.finds('notPresentTyped')
         len(elements)
@@ -327,7 +327,7 @@ class GetElementTests(HotDogBaseTest):
         element.click(timeout=3)
 
     def test_randomElementActionSync(self):
-        self.driver.get('http://orasi.github.io/Selenium-Java-Core/sites/unitTests/orasi/core/interfaces/element.html')
+        self.driver.get('http://orasi.github.io/Chameleon/sites/unitTests/orasi/core/interfaces/element.html')
         test = TestPage(driver=self.driver)
         element = test.find_random('notPresent')
         element.click(timeout=6)
@@ -340,7 +340,7 @@ class GetElementTests(HotDogBaseTest):
              element.click(timeout=1)
 
     def test_getElementText(self):
-        self.driver.get('http://orasi.github.io/Selenium-Java-Core/sites/unitTests/orasi/core/interfaces/element.html')
+        self.driver.get('http://orasi.github.io/Chameleon/sites/unitTests/orasi/core/interfaces/element.html')
         test = TestPage(driver=self.driver)
         element = test.find('notPresent')
         assert element.text == '', '[%s]' % element.text
@@ -358,7 +358,7 @@ class GetElementTests(HotDogBaseTest):
         assert time.time() - start_time >= 5
 
     def test_getElementsCountNotPresent(self):
-        self.driver.get('http://orasi.github.io/Selenium-Java-Core/sites/unitTests/orasi/core/interfaces/element.html')
+        self.driver.get('http://orasi.github.io/Chameleon/sites/unitTests/orasi/core/interfaces/element.html')
         test = TestPage(driver=self.driver)
         elements = test.finds('notPresent')
         assert elements.count(timeout=10) == 1
@@ -379,7 +379,7 @@ class GetElementTests(HotDogBaseTest):
         assert element.is_not_displayed(timeout=10)
 
     def test_elementIsNotDisplayedDisapear(self):
-        self.driver.get('http://orasi.github.io/Selenium-Java-Core/sites/unitTests/orasi/core/interfaces/element.html')
+        self.driver.get('http://orasi.github.io/Chameleon/sites/unitTests/orasi/core/interfaces/element.html')
         test = TestPage(driver=self.driver)
         element = test.find('disappear')
         start_time = time.time()
