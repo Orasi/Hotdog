@@ -39,7 +39,7 @@ def UploadToMustard(test, status, error_message=None, stacktrace=None):
         if test.testcase_id:
             test_identifier = test.testcase_id
         else:
-            test_identifier = test._testMethodName
+            return
 
         platform = test.desired_caps['platformName'] if 'platformName' in test.desired_caps else test.desired_caps['platform']
         payload = {"result":{ "project_id": MustardKey,
