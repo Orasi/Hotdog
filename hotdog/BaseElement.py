@@ -270,7 +270,10 @@ class BaseElement(WebElement):
 
     @TestStep('Scroll Element To Center: {args[0]}')
     def scroll_element_to_center(self):
-        self.driver.execute_script("$('html,body').animate({scrollTop: $(arguments[0]).offset().top - $(window).height() / 2 + $(arguments[0]).height() / 2},'fast');", self)
+        self.driver.execute_script("var elRect = arguments[0].getBoundingClientRect();"
+                                   "var absoluteElTop = elRect.top + window.pageYOffset;"
+                                   "var middle = absoluteElTop - (window.innerHeight / 2);"
+                                   "window.scrollTo(0, middle);", self)
         return self
 
     @TestStep('ScrollElement To View Center: {args[0]}')

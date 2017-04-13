@@ -198,6 +198,9 @@ class HotDogBaseTest(unittest.TestCase):
             #     browser_profile = seleniumWebdriver.FirefoxProfile('/home/matt/l7539ezh.GridTest')
             if dc['platform'].lower() == 'windows':
                 dc['marionette'] = False
+            if dc['browserName'] == 'internet explorer':
+                # Will clear the cache, cookies, history, and saved form data for all running instances of Internet Explorer
+                builtins.threadlocal.config['desiredCaps']["ie.ensureCleanSession"] = True
             url = cls.GRID_URL
         elif 'sauce' in provider:
             url = cls.SAUCE_URL
