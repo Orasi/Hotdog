@@ -190,7 +190,7 @@ class BaseElement(WebElement):
         self.javascript("this.style.border='0px'")
         return self
 
-    def set(self, text, skip_clear=False):
+    def set(self, text, skip_clear=False, skip_event=False):
         '''
         Set the elements text value to the desired text
         @param skip_clear True or False to clear the elements current text, default is to clear
@@ -202,6 +202,7 @@ class BaseElement(WebElement):
                 self.clear()
         except:
             pass
+
         self.send_keys(text)
         return self
 
@@ -211,7 +212,7 @@ class BaseElement(WebElement):
     def clear(self):
         if self.debug:
             self.flash()
-        self.driver.execute_script('arguments[0].value= ""; arguments[0].text = "";', self)
+        self.driver.javascript('this.value= ""; this.text = "";', self)
         return self
 
     @TestStep('Set Text Value:  {args[0]} to {args[1]}')
