@@ -87,6 +87,13 @@
         <platform>web</platform>
         <platformName>Windows 10</platformName>
         <browserName>microsoftedge</browserName>
+        <version>14</version>
+    </node>
+
+    <node>
+        <platform>web</platform>
+        <platformName>Windows 10</platformName>
+        <browserName>microsoftedge</browserName>
         <version>13</version>
     </node>
 </SauceNodes>
