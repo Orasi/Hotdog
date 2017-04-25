@@ -201,6 +201,8 @@ class HotDogBaseTest(unittest.TestCase):
             if dc['browserName'] == 'internet explorer':
                 # Will clear the cache, cookies, history, and saved form data for all running instances of Internet Explorer
                 builtins.threadlocal.config['desiredCaps']["ie.ensureCleanSession"] = True
+                builtins.threadlocal.config['desiredCaps']["enablePersistentHover"] = False
+                builtins.threadlocal.config['desiredCaps']["requireWindowFocus"] = True
             url = cls.GRID_URL
         elif 'sauce' in provider:
             url = cls.SAUCE_URL
