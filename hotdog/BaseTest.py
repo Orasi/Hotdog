@@ -194,13 +194,18 @@ class HotDogBaseTest(unittest.TestCase):
         browser_profile = None
 
         if 'grid' in provider:
-            # if self.desired_caps['browserName'].lower() == 'firefox':
-            #     browser_profile = seleniumWebdriver.FirefoxProfile('/home/matt/l7539ezh.GridTest')
-            if dc['platform'].lower() == 'windows':
-                dc['marionette'] = False
-            if dc['browserName'] == 'internet explorer':
-                # Will clear the cache, cookies, history, and saved form data for all running instances of Internet Explorer
-                builtins.threadlocal.config['desiredCaps']["ie.ensureCleanSession"] = True
+            # Added try/except - if running mobile 'platform' wont be set. Variable is instead platformName.
+            # try/except allows mobile to run without issue - C.W.
+            try:
+                # if self.desired_caps['browserName'].lower() == 'firefox':
+                #     browser_profile = seleniumWebdriver.FirefoxProfile('/home/matt/l7539ezh.GridTest')
+                if dc['platform'].lower() == 'windows':
+                    dc['marionette'] = False
+                if dc['browserName'] == 'internet explorer':
+                    # Will clear the cache, cookies, history, and saved form data for all running instances of Internet Explorer
+                    builtins.threadlocal.config['desiredCaps']["ie.ensureCleanSession"] = True
+            except:
+                pass
             url = cls.GRID_URL
         elif 'sauce' in provider:
             url = cls.SAUCE_URL
