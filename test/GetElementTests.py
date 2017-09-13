@@ -18,6 +18,7 @@ class TestElement(BaseElement):
 
 
 class TestContainer(BaseElement):
+
     testElement = (By.TAG_NAME, 'input')
     typedTestElement = (By.TAG_NAME, 'input', TestElement)
     notPresent = (By.ID, 'appear')
@@ -44,6 +45,13 @@ class GetElementTests(HotDogBaseTest):
         assert self.driver.__class__.__name__ == 'BaseWebDriver'
 
     def test_getsBaseElement(self):
+        step_1 = self.add_test_step("new test step or whatever the syntax is")
+        for i in range(0, 30):
+            inner_step = self.add_test_step("do something")
+            # some syntax
+            inner_step("Complete")
+
+        step_1("Complete")
         self.driver.implicitly_wait(15)
         self.driver.get('https://the-internet.herokuapp.com/checkboxes')
         element =  self.driver.find_element(by=By.TAG_NAME, value='input')
