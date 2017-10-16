@@ -194,11 +194,7 @@ class HotDogBaseTest(unittest.TestCase):
         browser_profile = None
 
         if 'grid' in provider:
-            # Added try/except - if running mobile 'platform' wont be set. Variable is instead platformName.
-            # try/except allows mobile to run without issue - C.W.
             try:
-                # if self.desired_caps['browserName'].lower() == 'firefox':
-                #     browser_profile = seleniumWebdriver.FirefoxProfile('/home/matt/l7539ezh.GridTest')
                 if dc['platform'].lower() == 'windows':
                     dc['marionette'] = False
                 if dc['browserName'] == 'internet explorer':
@@ -239,6 +235,11 @@ class HotDogBaseTest(unittest.TestCase):
             url = GetConfig('MC_URL') + '/wd/hub'
         else:
             url = cls.GRID_URL
+
+        if dc['browserName'] == 'chrome' and GetConfig('FULLSCREEN') == 'True':
+            co = seleniumWebdriver.ChromeOptions()
+            co.add_argument('start-maximized')
+            dc['chromeOptions'] = co.to_capabilities()['chromeOptions']
 
         if not runLocal:
             driver = webdriver.Remote(
