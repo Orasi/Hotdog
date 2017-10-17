@@ -236,10 +236,20 @@ class HotDogBaseTest(unittest.TestCase):
         else:
             url = cls.GRID_URL
 
-        if dc['browserName'] == 'chrome' and GetConfig('FULLSCREEN') == 'True':
-            co = seleniumWebdriver.ChromeOptions()
-            co.add_argument('start-maximized')
-            dc['chromeOptions'] = co.to_capabilities()['chromeOptions']
+        # Look for the FULLSCREEN config tag, if it's there make the browser fullscreen based on the way available to set it so
+        # TODO: IE and Firefox fullscreen
+        try:
+            if GetConfig('FULLSCREEN'):
+                if dc['browserName'] == 'chrome':
+                    co = seleniumWebdriver.ChromeOptions()
+                    co.add_argument('start-maximized')
+                    dc['chromeOptions'] = co.to_capabilities()['chromeOptions']
+                elif dc['browserName'] == 'internet explorer':
+                    pass
+                elif dc['browserName'] == 'firefox':
+                    pass
+        except:
+            pass
 
         if not runLocal:
             driver = webdriver.Remote(
