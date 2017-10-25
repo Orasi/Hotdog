@@ -212,7 +212,7 @@ class BaseElement(WebElement):
     def clear(self):
         if self.debug:
             self.flash()
-        self.driver.javascript('this.value= ""; this.text = "";', self)
+        self.javascript('this.value= ""; this.text = "";')
         return self
 
     @TestStep('Set Text Value:  {args[0]} to {args[1]}')
