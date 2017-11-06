@@ -237,17 +237,23 @@ class HotDogBaseTest(unittest.TestCase):
             url = cls.GRID_URL
 
         # Look for the FULLSCREEN config tag, if it's there make the browser fullscreen based on the way available to set it so
-        # TODO: IE and Firefox fullscreen
         try:
             if GetConfig('FULLSCREEN'):
                 if dc['browserName'] == 'chrome':
                     co = seleniumWebdriver.ChromeOptions()
-                    co.add_argument('start-maximized')
+                    co.add_argument('--start-maximized')
                     dc['chromeOptions'] = co.to_capabilities()['chromeOptions']
                 elif dc['browserName'] == 'internet explorer':
                     pass
                 elif dc['browserName'] == 'firefox':
                     pass
+        except:
+            pass
+
+        ## TEMP WORKAROUND FOR FALING FF on Docker . This should be in appium select or device selector somewhere
+        try:
+            if dc['platformName'] == 'LINUX' and dc['browserName'] == 'firefox':
+                dc['platformName'] = dc['platformName'].lower()
         except:
             pass
 
