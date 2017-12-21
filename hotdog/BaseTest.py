@@ -212,7 +212,16 @@ class HotDogBaseTest(unittest.TestCase):
                     'excludeSwitches': ['disable-component-update']}
         elif provider.lower() == 'local-chrome':
             runLocal = True
-            driver = seleniumWebdriver.Chrome()
+            try:
+                full = GetConfig('FULLSCREEN')
+            except:
+                full = False
+            if full:
+                co = seleniumWebdriver.ChromeOptions()
+                co.add_argument('--start-maximized')
+                driver = seleniumWebdriver.Chrome(chrome_options=co)
+            else:
+                driver = seleniumWebdriver.Chrome()
         elif provider.lower() == 'local-firefox:marionette':
             runLocal = True
             caps = DesiredCapabilities.FIREFOX
